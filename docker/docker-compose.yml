@@ -1,0 +1,39 @@
+version: '2.1'
+services:
+  project:
+    container_name: 'test-project'
+    image: thecodingmachine/php:8.3-v4-apache
+    volumes:
+      - ./../:/var/www/html
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/www/
+      - APACHE_EXTENSION_HEADERS=1
+    ports:
+      - '8000:80'   # Http
+#      - '443:443' # Https
+
+  mariadb-development:
+    image: mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_DATABASE: test_project_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./volumes/mariadb/:/var/lib/mysql
+
+  phpmyadmin:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mariadb-development
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8090:80"
+    environment:
+      PMA_HOST: mariadb-development
+      MYSQL_ROOT_PASSWORD: 123456
+      PMA_USER: root
+      PMA_PASSWORD: 123456
+      UPLOAD_LIMIT: 64M

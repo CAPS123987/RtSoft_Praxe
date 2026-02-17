@@ -1,0 +1,10 @@
+services:
+	- App\Router\RouterFactory::createRouter
+	- App\Model\Repos\CommentRepository
+	- App\Model\Repos\PostRepository
+	- App\Model\Repos\DeletionRepository
+	- App\Model\Facades\PostCommentFacade
+	- App\Model\Facades\CommentDeletionFacade
+	- App\Model\Mapper\Mapper
+	- App\Model\Facades\PostFacade
+	- App\Model\Facades\CommentFacade

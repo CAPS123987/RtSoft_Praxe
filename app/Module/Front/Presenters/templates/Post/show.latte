@@ -1,0 +1,50 @@
+{block content}
+
+
+<div class="post mb-4 mx-2 p-3 border border-secondary-subtle rounded-2">
+    <h2 n:block="title">{$post->title}</h2>
+
+    <div class="date d-inline-flex mb-2 px-1 py-0.5 fw-semibold text-info-emphasis
+    bg-info-subtle border border-info-subtle rounded-2"
+    >{$post->created_at|date:'F j, Y'}</div>
+
+    <div class="post">{$post->content}</div>
+
+    <a n:href="Edit:edit $post->id" n:if="$user->isLoggedIn()">Upravit příspěvek</a>
+</div>
+
+<div class="mx-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; grid-template-rows: min-content 1fr">
+    <div class="comment-content mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1 / 3">
+        <h2>Komentáře:</h2>
+
+        <div class="comments mb-2">
+            {foreach $comments as $comment}
+                <p class="mb-1"><b><a href="mailto:{$comment->email}" n:tag-if="$comment->email">
+                            {$comment->name}
+                        </a></b> napsal:</p>
+                <div class="mb-3">{$comment->content}</div>
+                <a n:if="$user->isLoggedIn()" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
+            {/foreach}
+        </div>
+    </div>
+    <div class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1">
+        <form n:name=commentForm class=form>
+            <ul class="errors" n:ifcontent>
+                <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
+            </ul>
+
+            <div>
+                <label n:name=name>Jméno: <input n:name=name size=20 autofocus></label>
+            </div>
+            <div>
+                <label n:name=email>Email: <input n:name=email></label>
+            </div>
+            <div>
+                <label n:name=content>Text: <input n:name=content></label>
+            </div>
+            <div>
+                <input n:name=send class="btn btn-bd-primary bg-primary">
+            </div>
+        </form>
+    </div>
+</div>

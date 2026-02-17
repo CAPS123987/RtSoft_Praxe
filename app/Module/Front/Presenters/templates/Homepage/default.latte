@@ -1,0 +1,17 @@
+{block content}
+    <a n:href="Edit:create" n:if="$user->isLoggedIn()">Vytvořit příspěvek</a>
+
+    <h1>Posty</h1>
+
+    <div n:foreach="$posts as $post" class="post mb-4 mx-2 p-3 border border-secondary-subtle rounded-2">
+        <h2><a n:href="Post:show $post->id">{$post->title}</a></h2>
+
+        <div class="date d-inline-flex mb-2 px-1 py-0.5 fw-semibold text-info-emphasis
+        bg-info-subtle border border-info-subtle rounded-2">
+            {$post->created_at|date:'F j, Y'}
+        </div>
+
+        <div>{$post->content|truncate:256}</div>
+    </div>
+
+{/block}

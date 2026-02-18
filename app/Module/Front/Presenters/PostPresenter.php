@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Module\Front\Presenters;
 
+use App\Model;
 use Nette;
 use Nette\Application\UI\Form;
-use App\Model;
 
 final class PostPresenter extends Nette\Application\UI\Presenter
 {
     public function __construct(
-        private Model\Facades\PostCommentFacade $postCommentFacade,
-        private Model\Facades\PostFacade $postFacade,
-        private Model\Facades\CommentFacade $commentFacade,
-        private Model\Mapper\Mapper $mapper,
+        private Model\Post\Facades\PostCommentFacade $postCommentFacade,
+        private Model\Post\Facades\PostFacade        $postFacade,
+        private Model\Comment\Facades\CommentFacade  $commentFacade,
+        private Model\Comment\Mapper\CommentMapper   $commentMapper,
     ) {
     }
 
@@ -58,7 +58,7 @@ final class PostPresenter extends Nette\Application\UI\Presenter
         $id = $this->getParameter('id');
         $data["post_id"] = $id;
 
-        $commentDTO = $this->mapper->mapArrayToDTO($data, Model\DTOs\CommentDTO::class);
+        $commentDTO = $this->commentMapper->mapArrayToDTO($data);
 
         $this->commentFacade->insertDTO($commentDTO);
 

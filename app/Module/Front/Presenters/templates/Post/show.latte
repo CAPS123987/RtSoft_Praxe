@@ -11,6 +11,7 @@
     <div class="post">{$post->content}</div>
 
     <a n:href="Edit:edit $post->id" n:if="$user->isLoggedIn()">Upravit příspěvek</a>
+    <a n:href="Edit:deletePost $post->id" n:if="$user->isLoggedIn()">Smazat příspěvek</a>
 </div>
 
 <div class="mx-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; grid-template-rows: min-content 1fr">

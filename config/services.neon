@@ -5,6 +5,8 @@ services:
 	- App\Model\Repos\DeletionRepository
 	- App\Model\Facades\PostCommentFacade
 	- App\Model\Facades\CommentDeletionFacade
-	- App\Model\Mapper\Mapper
+	- App\Model\Mapper\CommentMapper
+	- App\Model\Mapper\PostMapper
 	- App\Model\Facades\PostFacade
 	- App\Model\Facades\CommentFacade
+	- App\Model\Facades\PostDeletionFacade

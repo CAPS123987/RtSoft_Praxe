@@ -20,6 +20,10 @@ class UserDTO implements DTO
         return new self($id, $name, $role, $password);
     }
 
+    /**
+     * @param array<string,Mixed> $data
+     * @return self
+     */
     public static function createFromArray(array $data): self
     {
         return new self(

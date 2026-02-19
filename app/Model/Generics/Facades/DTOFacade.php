@@ -11,6 +11,9 @@ use Nette\Database\Table\ActiveRow;
  * @template T of DTO
  */
 abstract class DTOFacade {
+    /**
+     * @param App\Model\Generics\Mapper\Mapper<T> $mapper
+     */
     public function __construct(
         private readonly App\Model\Generics\Repo\Repository $repository,
         private readonly App\Model\Generics\Mapper\Mapper   $mapper,
@@ -19,7 +22,7 @@ abstract class DTOFacade {
 
 
     /**
-     * @return DTO
+     * @return T
      * @throws \RuntimeException
      */
     public function getDTOById(int $id): DTO
@@ -32,10 +35,10 @@ abstract class DTOFacade {
     }
 
     /**
-     * @return DTO
+     * @return T
      * @throws \RuntimeException
      */
-    public function getDTOByX(int $X, string $value): DTO
+    public function getDTOByX(string $X, string $value): DTO
     {
         $row = $this->repository->getByX($X, $value);
         if (!$row) {
@@ -45,8 +48,7 @@ abstract class DTOFacade {
     }
 
     /**
-     * @param DTO $DTO
-     * @return void
+     * @param T $DTO
      */
     public function insertDTO(DTO $DTO): ActiveRow
     {
@@ -56,27 +58,38 @@ abstract class DTOFacade {
     }
 
     /**
-     * @param DTO $DTO
+     * @param T $DTO
      *@throws \RuntimeException
      */
     public function updateDTO(DTO $DTO): void
     {
-        if (!$DTO->id) {
+        if (!isset($DTO->id) || $DTO->id === null) {
             throw new \RuntimeException('Record ID is required for update');
         }
         $this->repository->update($DTO->id, $DTO->toArray());
     }
 
-    public function deleteDTO(DTO $DTO): bool
+    /**
+     * @param T $DTO
+     * @return int
+     */
+    public function deleteDTO(DTO $DTO): int
     {
-        if (!$DTO->id) {
+        if (!isset($DTO->id) || $DTO->id === null) {
             throw new \RuntimeException('Record ID is required for deletion');
         }
         return $this->repository->delete($DTO->id);
     }
 
+    /**
+     * @param T $DTO
+     * @return int
+     */
     public function saveDTO(DTO $DTO): int
     {
+        if (!isset($DTO->id)) {
+            throw new \RuntimeException('DTO must have id property');
+        }
         return $this->repository->save($DTO->toArray());
     }
 }

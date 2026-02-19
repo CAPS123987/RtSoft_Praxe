@@ -4,7 +4,7 @@ namespace App\Model\Post\Facades;
 
 use App;
 use App\Model\Generics\Facades\DTOFacade;
-use App\Model\Post\DTO\postDTO;
+use App\Model\Post\DTO\PostDTO;
 
 /**
  * @extends DTOFacade<PostDTO>

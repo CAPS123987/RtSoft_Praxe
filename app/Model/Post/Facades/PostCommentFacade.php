@@ -13,13 +13,23 @@ final class PostCommentFacade
     ) {
     }
 
+    /**
+     * @return array<CommentDTO>
+     */
     public function getPostsComments(PostDTO $post): array
     {
+        if ($post->id === null) {
+            throw new \InvalidArgumentException("PostDTO must have an id");
+        }
         return $this->commentFacade->getCommentsByPostId($post->id);
     }
 
     public function getPostByComment(CommentDTO $commentDTO): PostDTO
     {
-        return $this->postFacade->getDTOById($commentDTO->post_id);
+        $post = $this->postFacade->getDTOById($commentDTO->post_id);
+        if (!$post instanceof PostDTO) {
+            throw new \RuntimeException("Expected PostDTO, got different type");
+        }
+        return $post;
     }
 }

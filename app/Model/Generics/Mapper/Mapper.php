@@ -18,14 +18,13 @@ abstract class Mapper
 
     /**
      * @param Nette\Database\Table\Selection $selection
-     * @return DTO
+     * @return array<DTO>
      */
     abstract public function mapAll(Nette\Database\Table\Selection $selection): array;
 
     /**
-     * @param array $data
-     * @param string $class
-     * @return DTO|null
+     * @param array<string,Mixed> $data
+     * @return DTO
      */
     abstract public function mapArrayToDTO(array $data): DTO;
 }

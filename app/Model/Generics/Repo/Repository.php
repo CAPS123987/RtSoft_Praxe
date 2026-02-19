@@ -18,9 +18,13 @@ abstract class Repository
     {
         return $this->database->table($this->getTableName())->get($id);
     }
-    public function getByX(int $X, string $value): ActiveRow|null
+    public function getByX(string $X, string $value): ActiveRow|null
     {
-        return $this->database->table($this->getTableName())->where($X, $value)->fetch();
+        return $this->getAllByX($X,$value)->fetch();
+    }
+    public function getAllByX(string $X, string $value): Nette\Database\Table\Selection
+    {
+        return $this->database->table($this->getTableName())->where($X, $value);
     }
     public function getAll(): Nette\Database\Table\Selection
     {

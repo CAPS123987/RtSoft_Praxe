@@ -29,13 +29,19 @@ final class CommentDeletionFacade
 
     public function deleteComment(int $id): void
     {
-        $comment = $this->commentRepository->getById($id)->toArray();
-        $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment);
+        $comment = $this->commentRepository->getById($id);
+        if ($comment === null) {
+            throw new \RuntimeException("Comment with id {$id} not found");
+        }
+        $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment->toArray());
         $this->commentRepository->delete($id);
     }
 
     public function deleteCommentDTOTransaction(CommentDTO $commentDTO): bool
     {
+        if ($commentDTO->id === null) {
+            throw new \InvalidArgumentException("CommentDTO must have an id");
+        }
         return $this->deleteCommentTransaction($commentDTO->id);
     }
 

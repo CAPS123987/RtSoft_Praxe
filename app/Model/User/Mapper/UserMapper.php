@@ -35,6 +35,10 @@ final class UserMapper extends Mapper
     }
 
 
+    /**
+     * @param array<string,Mixed> $data
+     * @return UserDTO
+     */
     public function mapArrayToDTO(array $data): UserDTO
     {
         return UserDTO::createFromArray($data);

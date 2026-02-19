@@ -3,7 +3,7 @@ namespace App\Model\Comment\Mapper;
 
 use App\Model\Comment\DTO\CommentDTO;
 use App\Model\Generics\Mapper\Mapper;
-use App\Model\Post\DTO\PostDTO;
+use App\Model\Comment\Repo\CommentRepository;
 use Nette;
 
 /**
@@ -14,18 +14,18 @@ final class CommentMapper extends Mapper
     public function map(Nette\Database\Table\ActiveRow $row) : CommentDTO
     {
         return CommentDTO::create(
-            id: $row->id,
-            post_id: $row->post_id,
-            name: $row->name,
-            email: $row->email,
-            content: $row->content,
-            created_at: $row->created_at
+            id: $row->{CommentRepository::ID_COL},
+            post_id: $row->{CommentRepository::POST_ID_COL},
+            name: $row->{CommentRepository::NAME_COL},
+            email: $row->{CommentRepository::EMAIL_COL},
+            content: $row->{CommentRepository::CONTENT_COL},
+            created_at: $row->{CommentRepository::CREATED_AT_COL}
         );
     }
 
     /**
      * @param Nette\Database\Table\Selection $selection
-     * @return array<PostDTO>
+     * @return array<CommentDTO>
      */
     public function mapAll(Nette\Database\Table\Selection $selection): array
     {
@@ -36,6 +36,10 @@ final class CommentMapper extends Mapper
         return $result;
     }
 
+    /**
+     * @param array<string,Mixed> $data
+     * @return CommentDTO
+     */
     public function mapArrayToDTO(array $data): CommentDTO
     {
         return CommentDTO::createFromArray($data);

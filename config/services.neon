@@ -1,12 +1,16 @@
 services:
-	- App\Router\RouterFactory::createRouter
-	- App\Model\Repos\CommentRepository
-	- App\Model\Repos\PostRepository
-	- App\Model\Repos\DeletionRepository
-	- App\Model\Facades\PostCommentFacade
-	- App\Model\Facades\CommentDeletionFacade
-	- App\Model\Mapper\CommentMapper
-	- App\Model\Mapper\PostMapper
-	- App\Model\Facades\PostFacade
-	- App\Model\Facades\CommentFacade
-	- App\Model\Facades\PostDeletionFacade
+    - App\Router\RouterFactory::createRouter
+    security.passwords: Nette\Security\Passwords(::PASSWORD_BCRYPT, [cost: 12])
+    - App\Model\User\Auth\DbAuthenticator
+
+
+
+search:
+    - in: %appDir%/Model
+      classes:
+        - *Facade
+        - *Factory
+        - *Repository
+        - *Service
+        - *Mapper
+        - *List

@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace App\Module\Front\Presenters;
 
 use App\Model;
+use App\Model\Permission\PermissionList;
 use Nette;
 use Nette\Application\UI\Form;
 
-final class PostPresenter extends Nette\Application\UI\Presenter
+final class PostPresenter extends BasePresenter
 {
     public function __construct(
         private Model\Post\Facades\PostCommentFacade $postCommentFacade,
         private Model\Post\Facades\PostFacade        $postFacade,
         private Model\Comment\Facades\CommentFacade  $commentFacade,
         private Model\Comment\Mapper\CommentMapper   $commentMapper,
+        private PermissionList $perms,
     ) {
+        parent::__construct($perms);
     }
 
     public function renderShow(int $id): void

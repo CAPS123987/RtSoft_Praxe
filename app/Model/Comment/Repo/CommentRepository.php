@@ -38,7 +38,7 @@ final class CommentRepository extends Repository
     function getPostIdByCommentId(int $commentId): ?int
     {
         $comment = $this->getById($commentId);
-        return $comment?->post_id;
+        return $comment?->{self::POST_ID_COL};
     }
 
     function getCommentsByPostId(int $postId): Nette\Database\Table\Selection

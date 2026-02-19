@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace App\Module\Front\Presenters;
 
+use App\Model\Permission\PermissionList;
 use Nette;
 use Nette\Application\UI\Form;
 
-class SignPresenter extends Nette\Application\UI\Presenter
+class SignPresenter extends BasePresenter
 {
+    public function __construct(
+        private PermissionList $perms,
+    ) {
+        parent::__construct($perms);
+    }
 
     public function actionOut(): void
     {
@@ -40,7 +46,6 @@ class SignPresenter extends Nette\Application\UI\Presenter
         try {
             $this->getUser()->login($data["username"], $data["password"]);
             $this->redirect('Homepage:');
-
         } catch (Nette\Security\AuthenticationException $e) {
             $form->addError('Nesprávné přihlašovací jméno nebo heslo.');
         }

@@ -10,11 +10,11 @@
 
     <div class="post">{$post->content}</div>
 
-    <a n:href="Edit:edit $post->id" n:if="$user->isLoggedIn()">Upravit příspěvek</a>
-    <a n:href="Edit:deletePost $post->id" n:if="$user->isLoggedIn()">Smazat příspěvek</a>
+    <a n:href="Edit:edit $post->id" n:if="$presenter->isAllowed($permList->editPost)">Upravit příspěvek</a>
+    <a n:href="Edit:deletePost $post->id" n:if="$presenter->isAllowed($permList->deletePost)">Smazat příspěvek</a>
 </div>
 
-<div class="mx-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; grid-template-rows: min-content 1fr">
+<div class="mx-2" style="display:grid; gap: 1.5rem; grid-template-rows: min-content 1fr">
     <div class="comment-content mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1 / 3">
         <h2>Komentáře:</h2>
 
@@ -24,12 +24,12 @@
                             {$comment->name}
                         </a></b> napsal:</p>
                 <div class="mb-3">{$comment->content}</div>
-                <a n:if="$user->isLoggedIn()" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
+                <a n:if="$presenter->isAllowed($permList->deleteComment)" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
             {/foreach}
         </div>
     </div>
-    <div class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1">
-        <form n:name=commentForm class=form>
+    <div  class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1">
+        <form n:if="$presenter->isAllowed($permList->addComment)" n:name=commentForm class=form>
             <ul class="errors" n:ifcontent>
                 <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
             </ul>
@@ -47,5 +47,6 @@
                 <input n:name=send class="btn btn-bd-primary bg-primary">
             </div>
         </form>
+        <h2 n:if="!$presenter->isAllowed($permList->addComment)">Pro přidání komentáře se musíte přihlásit</h2>
     </div>
 </div>

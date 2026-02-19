@@ -1,5 +1,6 @@
 {block content}
-    <a n:href="Edit:create" n:if="$user->isLoggedIn()">Vytvořit příspěvek</a>
+    <a n:href="Edit:create"
+    n:if="$presenter->isAllowed($permList->addPost)">Vytvořit příspěvek</a>
 
     <h1>Posty</h1>
 

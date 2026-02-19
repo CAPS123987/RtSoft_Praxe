@@ -1,9 +1,9 @@
 <?php
 namespace App\Model\Post\Mapper;
 
-use App\Model\Comment\DTO\CommentDTO;
 use App\Model\Generics\Mapper\Mapper;
 use App\Model\Post\DTO\PostDTO;
+use App\Model\Post\Repo\PostRepository;
 use Nette;
 
 /**
@@ -14,10 +14,10 @@ final class PostMapper extends Mapper
     public function map(Nette\Database\Table\ActiveRow $row) : PostDTO
     {
         return PostDTO::create(
-            id: $row->id,
-            title: $row->title,
-            content: $row->content,
-            created_at: $row->created_at
+            id: $row->{PostRepository::ID_COL},
+            title: $row->{PostRepository::TITLE_COL},
+            content: $row->{PostRepository::CONTENT_COL},
+            created_at: $row->{PostRepository::CREATED_AT_COL}
         );
     }
 
@@ -34,6 +34,10 @@ final class PostMapper extends Mapper
         return $result;
     }
 
+    /**
+     * @param array<string,Mixed> $data
+     * @return PostDTO
+     */
     public function mapArrayToDTO(array $data): PostDTO
     {
         return PostDTO::createFromArray($data);

@@ -31,7 +31,10 @@
 		<nav class="container-xxl bd-gutter flex-wrap flex-lg-nowrap text-decoration-none list-unstyled">
 			<li><a n:href="Homepage:" class="text-decoration-none text-primary h4">Články</a></li>
 			{if $user->isLoggedIn()}
-				<li><a n:href="Sign:out" class="text-decoration-none text-primary h4">Odhlásit</a></li>
+				<li>
+					<a n:href="Sign:out" class="text-decoration-none text-primary h4">Odhlásit</a>
+					<a n:if="$presenter->isAllowed($permList->adminPanel)" n:href="Sign:out" class="text-decoration-none text-primary h4">Admin</a>
+				</li>
 			{else}
 				<li><a n:href="Sign:in" class="text-decoration-none text-primary h4">Přihlásit</a></li>
 			{/if}

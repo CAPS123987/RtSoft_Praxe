@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Module\Front\Presenters;
 
 use App\Model;
+use App\Model\Permission\PermissionList;
 use Nette;
 use Nette\Application\UI\Form;
 
-final class EditPresenter extends Nette\Application\UI\Presenter
+final class EditPresenter extends BasePresenter
 {
     public function __construct(
         private Model\Post\Facades\PostFacade               $postFacade,
@@ -16,7 +17,9 @@ final class EditPresenter extends Nette\Application\UI\Presenter
         private Model\Comment\Facades\CommentDeletionFacade $commentDeletionFacade,
         private Model\Post\Facades\PostDeletionFacade       $postDeletionFacade,
         private Model\Post\Mapper\PostMapper                $postMapper,
+        private PermissionList $perms,
     ) {
+        parent::__construct($perms);
     }
 
     public function startup(): void
@@ -32,12 +35,21 @@ final class EditPresenter extends Nette\Application\UI\Presenter
     {
         $post = $this->postFacade->getDTOById($id);
 
+        if(!parent::isAllowed($this->perms->editPost)) {
+            $this->flashMessage('Nemáte oprávnění upravovat tento příspěvek.', 'error');
+            $this->redirect('Homepage:');
+        }
+
         $this->getComponent('postForm')
             ->setDefaults($post->toArray());
     }
 
     public function actionDeletePost(int $id): void
     {
+        if(!parent::isAllowed($this->perms->deletePost)) {
+            $this->flashMessage('Nemáte oprávnění smazat tento příspěvek.', 'error');
+            $this->redirect('Homepage:');
+        }
         try {
             $post = $this->postFacade->getDTOById($id);
         } catch (\RuntimeException $e) {
@@ -57,6 +69,11 @@ final class EditPresenter extends Nette\Application\UI\Presenter
 
     public function actionDeleteComment(int $commentId): void
     {
+        if(!parent::isAllowed($this->perms->deleteComment)) {
+            $this->flashMessage('Nemáte oprávnění smazat tento komentář.', 'error');
+            $this->redirect('Homepage:');
+        }
+
         try {
             $comment = $this->commentFacade->getDTOById($commentId);
         } catch (\RuntimeException $e) {
@@ -97,6 +114,11 @@ final class EditPresenter extends Nette\Application\UI\Presenter
      */
     public function postFormSucceeded(array $data): void
     {
+        if(!parent::isAllowed($this->perms->editPost)) {
+            $this->flashMessage('Nemáte oprávnění přidat tento příspěvek.', 'error');
+            $this->redirect('Homepage:');
+        }
+
         $id = $this->getParameter('id');
 
         $data['id'] = $id;

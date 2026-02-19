@@ -33,6 +33,9 @@ final class PostDeletionFacade
 
     public function deletePostDTO(PostDTO $postDTO): bool
     {
+        if ($postDTO->id === null) {
+            throw new \InvalidArgumentException("PostDTO must have an id");
+        }
         return $this->deletePost($postDTO->id);
     }
 }

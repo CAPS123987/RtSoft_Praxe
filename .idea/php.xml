@@ -39,7 +39,7 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan-nette" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="abed95f0-511b-48b8-b40c-fc70e531d769" timeout="60000" />

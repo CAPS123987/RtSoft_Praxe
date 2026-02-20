@@ -29,4 +29,22 @@ abstract class BasePresenter extends Presenter
         }
         return $identity->hasPermission($permission);
     }
+
+    public function isAllowedWithOwner(string $permission, int $owner): bool
+    {
+        if(!$this->getUser()->isLoggedIn()) {
+            return false;
+        }
+        $identity = $this->getUser()->getIdentity();
+        if ($identity === null) {
+            return false;
+        }
+        return $identity->hasPermission($permission) && $owner === $identity->getId();
+    }
+
+    public function isAllowedWithOwnerOrAll(string $permissionAll, string $permissionOwn, int $owner): bool
+    {
+        return ($this->isAllowed($permissionAll) ||
+            $this->isAllowedWithOwner($permissionOwn, $owner));
+    }
 }

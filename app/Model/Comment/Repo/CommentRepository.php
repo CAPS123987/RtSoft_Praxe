@@ -10,6 +10,7 @@ final class CommentRepository extends Repository
     public const string TABLE_NAME = "comments";
     public const string ID_COL = "id";
     public const string POST_ID_COL = "post_id";
+    public const string OWNER_COL = "owner_id";
     public const string NAME_COL = "name";
     public const string EMAIL_COL = "email";
     public const string CONTENT_COL = "content";

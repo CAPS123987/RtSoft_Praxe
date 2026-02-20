@@ -16,6 +16,7 @@ final class CommentMapper extends Mapper
         return CommentDTO::create(
             id: $row->{CommentRepository::ID_COL},
             post_id: $row->{CommentRepository::POST_ID_COL},
+            owner_id: $row->{CommentRepository::OWNER_COL},
             name: $row->{CommentRepository::NAME_COL},
             email: $row->{CommentRepository::EMAIL_COL},
             content: $row->{CommentRepository::CONTENT_COL},

@@ -6,11 +6,7 @@ namespace App\Module\Front\Presenters;
 
 
 use App\Model\Permission\PermissionList;
-use App\Model\Permission\Repo\PermissionRepository;
 use App\Model\Post\Facades\PostFacade;
-use App\Model\User\Auth\Facades\RolePermissionFacade;
-use App;
-use Nette;
 
 
 final class HomepagePresenter extends BasePresenter

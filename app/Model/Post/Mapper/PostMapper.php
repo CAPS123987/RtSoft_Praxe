@@ -17,6 +17,7 @@ final class PostMapper extends Mapper
             id: $row->{PostRepository::ID_COL},
             title: $row->{PostRepository::TITLE_COL},
             content: $row->{PostRepository::CONTENT_COL},
+            owner: $row->{PostRepository::OWNER_COL},
             created_at: $row->{PostRepository::CREATED_AT_COL}
         );
     }

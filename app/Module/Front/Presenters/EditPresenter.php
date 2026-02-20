@@ -35,7 +35,8 @@ final class EditPresenter extends BasePresenter
     {
         $post = $this->postFacade->getDTOById($id);
 
-        if(!parent::isAllowed($this->perms->editPost)) {
+        if(!(parent::isAllowedWithOwnerOrAll($this->perms->editAllPost,$this->perms->editOwnPost, $post->owner)))
+        {
             $this->flashMessage('Nemáte oprávnění upravovat tento příspěvek.', 'error');
             $this->redirect('Homepage:');
         }
@@ -46,14 +47,16 @@ final class EditPresenter extends BasePresenter
 
     public function actionDeletePost(int $id): void
     {
-        if(!parent::isAllowed($this->perms->deletePost)) {
-            $this->flashMessage('Nemáte oprávnění smazat tento příspěvek.', 'error');
-            $this->redirect('Homepage:');
-        }
         try {
             $post = $this->postFacade->getDTOById($id);
         } catch (\RuntimeException $e) {
             $this->flashMessage('Příspěvek nebyl nalezen.', 'error');
+            $this->redirect('Homepage:');
+        }
+
+        if(!(parent::isAllowedWithOwnerOrAll($this->perms->deleteAllPost,$this->perms->deleteOwnPost, $post->owner)))
+        {
+            $this->flashMessage('Nemáte oprávnění smazat tento příspěvek.', 'error');
             $this->redirect('Homepage:');
         }
 
@@ -69,15 +72,16 @@ final class EditPresenter extends BasePresenter
 
     public function actionDeleteComment(int $commentId): void
     {
-        if(!parent::isAllowed($this->perms->deleteComment)) {
-            $this->flashMessage('Nemáte oprávnění smazat tento komentář.', 'error');
-            $this->redirect('Homepage:');
-        }
-
         try {
             $comment = $this->commentFacade->getDTOById($commentId);
         } catch (\RuntimeException $e) {
             $this->flashMessage('Komentář nebyl nalezen.', 'error');
+            $this->redirect('Homepage:');
+        }
+
+        if(!(parent::isAllowedWithOwnerOrAll($this->perms->deleteAllComment,$this->perms->deleteOwnComment, $comment->owner_id)))
+        {
+            $this->flashMessage('Nemáte oprávnění smazat tento komentář.', 'error');
             $this->redirect('Homepage:');
         }
 
@@ -114,7 +118,7 @@ final class EditPresenter extends BasePresenter
      */
     public function postFormSucceeded(array $data): void
     {
-        if(!parent::isAllowed($this->perms->editPost)) {
+        if(!parent::isAllowed($this->perms->addPost)) { 
             $this->flashMessage('Nemáte oprávnění přidat tento příspěvek.', 'error');
             $this->redirect('Homepage:');
         }
@@ -122,6 +126,7 @@ final class EditPresenter extends BasePresenter
         $id = $this->getParameter('id');
 
         $data['id'] = $id;
+        $data['owner_id'] = $this->getUser()->getIdentity()->getId();
 
         $id = $this->postFacade->saveDTO($this->postMapper->mapArrayToDTO($data));
 

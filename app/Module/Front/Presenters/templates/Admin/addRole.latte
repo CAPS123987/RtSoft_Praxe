@@ -1,0 +1,14 @@
+{block content}
+    <script>
+        document.getElementsByTagName("ol")[0].setAttribute("duration",7000);
+    </script>
+
+    <h1>Ahoj {$identity->getData()["name"]}</h1>
+    <p>Vítejte v přidávání role!</p>
+
+    <div n:if="$presenter->isAllowed($permList->addRole)"
+    class="mx-2 mb-4 p-3 border border-secondary-subtle rounded-2">
+        <h2>Přidání role</h2>
+        {control addRoleForm}
+    </div>
+{/block}

@@ -1,0 +1,25 @@
+{block content}
+    <script>
+        document.getElementsByTagName("ol")[0].setAttribute("duration",7000);
+    </script>
+
+    <a n:href="Admin:">Zpět</a>
+    <h1>Ahoj {$identity->getData()["name"]}</h1>
+    <p>Vítejte v seznamu rolí</p>
+
+    <a n:if="$presenter->isAllowed($permList->addRole)" n:href="Admin:addRole">Přidat roli</a>
+
+    <div>
+        <div n:foreach="$roles as $pair" class="mx-2 mb-4 p-3 border border-secondary-subtle rounded-2">
+{*            <h2>Jméno role: {$roleDTO->name}</h2>*}
+            <h2>Jméno role: {$pair[0]->name}</h2>
+
+            <div style="display: flex; flex-direction: row; gap: 10px ; flex-wrap: wrap">
+                <p class="mb-0" n:foreach="$pair[1] as $pemission">{$pemission->name}</p>
+            </div>
+
+            <a n:if="$presenter->isAllowed($permList->editPermission)" n:href="Admin:editRole $pair[0]->id">Upravit roli</a>
+        </div>
+    </div>
+
+{/block}

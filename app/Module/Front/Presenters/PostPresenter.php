@@ -38,9 +38,6 @@ final class PostPresenter extends BasePresenter
     {
         $form = new Form; // means Nette\Application\UI\Form
 
-        $form->addText('name', 'Jméno:')
-            ->setRequired();
-
         $form->addEmail('email', 'E-mail:');
 
         $form->addTextArea('content', 'Komentář:')
@@ -60,6 +57,11 @@ final class PostPresenter extends BasePresenter
     {
         $id = $this->getParameter('id');
         $data["post_id"] = $id;
+
+        $data["name"] = $this->getUser()->getIdentity()->getData()["name"];
+
+        $data["owner_id"] = $this->getUser()->getIdentity()->getId();
+
 
         $commentDTO = $this->commentMapper->mapArrayToDTO($data);
 

@@ -17,5 +17,6 @@ final class RoleFacade extends DTOFacade
     ) {
         parent::__construct($roleRepository, $roleMapper);
     }
+
 }
 

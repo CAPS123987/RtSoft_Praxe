@@ -12,13 +12,14 @@ class PostDTO implements DTO
         public readonly ?int      $id,
         public readonly ?DateTime $created_at,
         public readonly string   $title = '',
+        public readonly int      $owner = -1,
         public readonly string   $content = '',
     ) {
     }
 
-    public static function create(?int $id, string $title, string $content, ?DateTime $created_at): self
+    public static function create(?int $id, string $title, string $content, int $owner, ?DateTime $created_at): self
     {
-        return new self($id, $created_at, $title, $content);
+        return new self($id, $created_at, $title, $owner, $content);
     }
 
     /**
@@ -32,6 +33,7 @@ class PostDTO implements DTO
             id: $data[PostRepository::ID_COL] ?? null,
             created_at: isset($data[PostRepository::CREATED_AT_COL]) ? new DateTime($data[PostRepository::CREATED_AT_COL]) : null,
             title: $data[PostRepository::TITLE_COL] ?? '',
+            owner: $data[PostRepository::OWNER_COL] ?? -1,
             content: $data[PostRepository::CONTENT_COL] ?? '',
         );
     }
@@ -42,6 +44,7 @@ class PostDTO implements DTO
             PostRepository::ID_COL => $this->id,
             PostRepository::TITLE_COL => $this->title,
             PostRepository::CONTENT_COL => $this->content,
+            PostRepository::OWNER_COL => $this->owner,
             PostRepository::CREATED_AT_COL => $this->created_at,
         ];
     }

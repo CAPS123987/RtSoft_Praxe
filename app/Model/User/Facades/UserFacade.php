@@ -17,5 +17,4 @@ final class UserFacade extends DTOFacade
     ) {
         parent::__construct($userRepository, $userMapper);
     }
-
 }

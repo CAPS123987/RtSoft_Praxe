@@ -2,11 +2,10 @@
 
 namespace App\Model\User\Auth;
 
-use App\Model\User\Auth\Facades\RolePermissionFacade;
+use App\Model\Role\Facades\RolePermissionFacade;
 use App\Model\User\Facades\UserFacade;
 use App\Model\User\Repo\UserRepository;
 use Nette;
-use Nette\Security\SimpleIdentity;
 
 class DbAuthenticator implements Nette\Security\Authenticator
 {

@@ -48,6 +48,14 @@ abstract class DTOFacade {
     }
 
     /**
+     * @return array<T>
+     */
+    public function getAllDTO() : array
+    {
+        return $this->mapper->mapAll($this->repository->getAll());
+    }
+
+    /**
      * @param T $DTO
      */
     public function insertDTO(DTO $DTO): ActiveRow
@@ -87,9 +95,6 @@ abstract class DTOFacade {
      */
     public function saveDTO(DTO $DTO): int
     {
-        if (!isset($DTO->id)) {
-            throw new \RuntimeException('DTO must have id property');
-        }
         return $this->repository->save($DTO->toArray());
     }
 }

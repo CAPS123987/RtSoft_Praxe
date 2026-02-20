@@ -11,6 +11,7 @@ final class PostRepository extends Repository
     public const string ID_COL = "id";
     public const string TITLE_COL = "title";
     public const string CONTENT_COL = "content";
+    public const string OWNER_COL = "owner_id";
     public const string CREATED_AT_COL = "created_at";
     public function __construct(
         private Nette\Database\Explorer $database,

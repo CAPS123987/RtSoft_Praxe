@@ -12,14 +12,15 @@ class CommentDTO implements DTO
         public readonly ?int      $id,
         public readonly ?DateTime $created_at,
         public readonly int      $post_id = -1,
+        public readonly int      $owner_id = -1,
         public readonly string   $name = '',
         public readonly string   $email = '',
         public readonly string   $content = '',
     ) {
     }
 
-    public static function create(?int $id, int $post_id, string $name, string $email, string $content, ?DateTime $created_at): self {
-        return new self($id, $created_at, $post_id, $name, $email, $content);
+    public static function create(?int $id, int $post_id, int $owner_id, string $name, string $email, string $content, ?DateTime $created_at): self {
+        return new self($id, $created_at, $post_id, $owner_id, $name, $email, $content);
     }
 
     /**
@@ -33,6 +34,7 @@ class CommentDTO implements DTO
             id: $data[CommentRepository::ID_COL] ?? null,
             created_at: isset($data[CommentRepository::CREATED_AT_COL]) ? new DateTime($data[CommentRepository::CREATED_AT_COL]) : null,
             post_id: $data[CommentRepository::POST_ID_COL] ?? -1,
+            owner_id: $data[CommentRepository::OWNER_COL] ?? -1,
             name: $data[CommentRepository::NAME_COL] ?? '',
             email: $data[CommentRepository::EMAIL_COL] ?? '',
             content: $data[CommentRepository::CONTENT_COL] ?? '',
@@ -44,6 +46,7 @@ class CommentDTO implements DTO
         return [
             CommentRepository::ID_COL => $this->id,
             CommentRepository::POST_ID_COL => $this->post_id,
+            CommentRepository::OWNER_COL => $this->owner_id,
             CommentRepository::NAME_COL => $this->name,
             CommentRepository::EMAIL_COL => $this->email,
             CommentRepository::CONTENT_COL => $this->content,

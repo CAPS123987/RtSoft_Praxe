@@ -10,33 +10,35 @@
 
     <div class="post">{$post->content}</div>
 
-    <a n:href="Edit:edit $post->id" n:if="$presenter->isAllowed($permList->editPost)">Upravit příspěvek</a>
-    <a n:href="Edit:deletePost $post->id" n:if="$presenter->isAllowed($permList->deletePost)">Smazat příspěvek</a>
+    <a n:href="Edit:edit $post->id"
+        n:if="$presenter->isAllowedWithOwnerOrAll($permList->editAllPost,$permList->editOwnPost, $post->owner)"
+        >Upravit příspěvek</a>
+    <a n:href="Edit:deletePost $post->id"
+        n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllPost,$permList->deleteOwnPost, $post->owner)"
+    >Smazat příspěvek</a>
 </div>
 
-<div class="mx-2" style="display:grid; gap: 1.5rem; grid-template-rows: min-content 1fr">
-    <div class="comment-content mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1 / 3">
+<div class="mx-2" style="display:grid; gap: 1.5rem; grid-template-columns: 1fr 1fr; grid-template-rows: min-content 1fr">
+    <div class="comment-content mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1 / 3;grid-column: 1/2">
         <h2>Komentáře:</h2>
 
         <div class="comments mb-2">
-            {foreach $comments as $comment}
-                <p class="mb-1"><b><a href="mailto:{$comment->email}" n:tag-if="$comment->email">
+            <div n:foreach="$comments as $comment" class="comments comment-content mb-2 p-3 border border-secondary-subtle rounded-2">
+                <h4 class="mb-3"><b>
+                        <a href="mailto:{$comment->email}" n:tag-if="$comment->email">
                             {$comment->name}
-                        </a></b> napsal:</p>
-                <div class="mb-3">{$comment->content}</div>
-                <a n:if="$presenter->isAllowed($permList->deleteComment)" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
-            {/foreach}
+                        </a></b></h4>
+
+                <div class="mb-2">{$comment->content}</div>
+                <a n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllComment,$permList->deleteOwnComment,$comment->owner_id)" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
+            </div>
         </div>
     </div>
-    <div  class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1">
+    <div  class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1;grid-column: 2/3">
         <form n:if="$presenter->isAllowed($permList->addComment)" n:name=commentForm class=form>
             <ul class="errors" n:ifcontent>
                 <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
             </ul>
-
-            <div>
-                <label n:name=name>Jméno: <input n:name=name size=20 autofocus></label>
-            </div>
             <div>
                 <label n:name=email>Email: <input n:name=email></label>
             </div>

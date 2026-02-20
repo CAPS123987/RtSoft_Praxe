@@ -3,6 +3,7 @@
 namespace App\Model\User\DTO;
 
 use App\Model\Generics\DTO\DTO;
+use App\Model\Role\DTO\RoleDTO;
 use Nette\Utils\DateTime;
 use App\Model\User\Repo\UserRepository;
 
@@ -13,11 +14,12 @@ class UserDTO implements DTO
         public readonly string   $name = '',
         public readonly int   $role = -1,
         public readonly string   $password = '',
+        public readonly ?RoleDTO  $resolvedRole = null,
     ) {
     }
 
-    public static function create(?int $id, string $name, int $role, string $password): self {
-        return new self($id, $name, $role, $password);
+    public static function create(?int $id, string $name, int $role, string $password, ?RoleDTO $resolvedRole): self {
+        return new self($id, $name, $role, $password, $resolvedRole);
     }
 
     /**
@@ -31,6 +33,7 @@ class UserDTO implements DTO
             name: $data[UserRepository::NAME_COL] ?? '',
             role: $data[UserRepository::ROLE_COL] ?? -1,
             password: $data[UserRepository::PASSWORD_COL] ?? '',
+            resolvedRole: $data["resolvedRole"] ?? null,
         );
     }
 

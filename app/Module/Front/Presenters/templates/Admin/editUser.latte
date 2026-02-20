@@ -1,0 +1,15 @@
+{block content}
+    <script>
+        document.getElementsByTagName("ol")[0].setAttribute("duration",7000);
+    </script>
+
+    <a n:href="Admin:userList">Zpět</a>
+    <h1>Ahoj {$identity->getData()["name"]}</h1>
+    <p>Vítejte v úpravě uživatelů</p>
+
+    <div class="mx-2 mb-4 p-3 border border-secondary-subtle rounded-2">
+        {control editUserForm}
+
+    </div>
+
+{/block}

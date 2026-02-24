@@ -24,9 +24,15 @@ class PermissionDTO implements DTO
      */
     public static function createFromArray(array $data): self
     {
+        /** @var int|null $id */
+        $id = $data[PermissionRepository::ID_COL] ?? null;
+
+        /** @var string $name */
+        $name = $data[PermissionRepository::NAME_COL] ?? '';
+
         return new self(
-            id: $data[PermissionRepository::ID_COL] ?? null,
-            name: $data[PermissionRepository::NAME_COL] ?? '',
+            id: $id,
+            name: $name,
         );
     }
 

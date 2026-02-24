@@ -25,7 +25,7 @@ abstract class DTOFacade {
      * @return T
      * @throws \RuntimeException
      */
-    public function getDTOById(int $id): DTO
+    public function getDTOById(int $id)
     {
         $row = $this->repository->getById($id);
         if (!$row) {
@@ -38,7 +38,7 @@ abstract class DTOFacade {
      * @return T
      * @throws \RuntimeException
      */
-    public function getDTOByX(string $X, string $value): DTO
+    public function getDTOByX(string $X, string $value)
     {
         $row = $this->repository->getByX($X, $value);
         if (!$row) {
@@ -57,12 +57,15 @@ abstract class DTOFacade {
 
     /**
      * @param T $DTO
+     * @return ActiveRow
      */
     public function insertDTO(DTO $DTO): ActiveRow
     {
-        /** @var ActiveRow $row */
-        $row = $this->repository->insert($DTO->toArray());
-        return $row;
+        $result = $this->repository->insert($DTO->toArray());
+        if (!$result instanceof ActiveRow) {
+            throw new \RuntimeException('Insert did not return ActiveRow. Check table primary key.');
+        }
+        return $result;
     }
 
     /**

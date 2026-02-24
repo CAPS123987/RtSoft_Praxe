@@ -6,8 +6,9 @@ namespace App\Module\Front\Presenters;
 
 use App\Model;
 use App\Model\Permission\PermissionList;
+use App\Module\Front\Components\PostForm\PostFormComponent;
+use App\Module\Front\Components\PostForm\PostFormComponentFactory;
 use Nette;
-use Nette\Application\UI\Form;
 
 final class EditPresenter extends BasePresenter
 {
@@ -16,7 +17,7 @@ final class EditPresenter extends BasePresenter
         private Model\Comment\Facades\CommentFacade         $commentFacade,
         private Model\Comment\Facades\CommentDeletionFacade $commentDeletionFacade,
         private Model\Post\Facades\PostDeletionFacade       $postDeletionFacade,
-        private Model\Post\Mapper\PostMapper                $postMapper,
+        private PostFormComponentFactory                     $postFormComponentFactory,
         private PermissionList $perms,
     ) {
         parent::__construct($perms);
@@ -40,9 +41,6 @@ final class EditPresenter extends BasePresenter
             $this->flashMessage('Nemáte oprávnění upravovat tento příspěvek.', 'error');
             $this->redirect('Homepage:');
         }
-
-        $this->getComponent('postForm')
-            ->setDefaults($post->toArray());
     }
 
     public function actionDeletePost(int $id): void
@@ -99,39 +97,9 @@ final class EditPresenter extends BasePresenter
     }
 
 
-    protected function createComponentPostForm(): Form
+    protected function createComponentPostForm(): PostFormComponent
     {
-        $form = new Form;
-        $form->addText('title', 'Titulek:')
-            ->setRequired();
-        $form->addTextArea('content', 'Obsah:')
-            ->setRequired();
-
-        $form->addSubmit('send', 'Uložit a publikovat');
-        $form->onSuccess[] = [$this, 'postFormSucceeded'];
-
-        return $form;
-    }
-
-    /**
-     * @param array<string,string> $data
-     */
-    public function postFormSucceeded(array $data): void
-    {
-        if(!parent::isAllowed($this->perms->addPost)) { 
-            $this->flashMessage('Nemáte oprávnění přidat tento příspěvek.', 'error');
-            $this->redirect('Homepage:');
-        }
-
         $id = $this->getParameter('id');
-
-        $data['id'] = $id;
-        $data['owner_id'] = $this->getUser()->getIdentity()->getId();
-
-        $id = $this->postFacade->saveDTO($this->postMapper->mapArrayToDTO($data));
-
-
-        $this->flashMessage('Příspěvek byl úspěšně publikován.', 'success');
-        $this->redirect('Post:show', strval($id));
+        return $this->postFormComponentFactory->create($id !== null ? (int) $id : null);
     }
 }

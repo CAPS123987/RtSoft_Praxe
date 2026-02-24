@@ -12,8 +12,8 @@ use App\Model\Generics\Facades\DTOFacade;
 final class UserFacade extends DTOFacade
 {
     public function __construct(
-        private readonly App\Model\User\Repo\UserRepository $userRepository,
-        private readonly App\Model\User\Mapper\UserMapper   $userMapper,
+        App\Model\User\Repo\UserRepository $userRepository,
+        App\Model\User\Mapper\UserMapper   $userMapper,
     ) {
         parent::__construct($userRepository, $userMapper);
     }

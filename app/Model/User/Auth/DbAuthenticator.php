@@ -10,7 +10,6 @@ use Nette;
 class DbAuthenticator implements Nette\Security\Authenticator
 {
     public function __construct(
-        private Nette\Database\Explorer $database,
         private Nette\Security\Passwords $passwords,
         private RolePermissionFacade $rolePermissionFacade,
         private UserFacade $userFacade,
@@ -32,24 +31,10 @@ class DbAuthenticator implements Nette\Security\Authenticator
         $permissions = $this->rolePermissionFacade->getRolePermissionsByRoleId($user->role);
 
         return new BlogIdentity(
-            $user->id,
+            $user->id ?? -1,
             $permissions,
             $user->role, // nebo pole více rolí
             ['name' => $user->name],
         );
-    }
-
-    public function isAllowed($role, $resource, $operation): bool
-    {
-        if ($role === 'admin') {
-            return true;
-        }
-        if ($role === 'user' && $resource === 'article') {
-            return true;
-        }
-
-        // ...
-
-        return false;
     }
 }

@@ -18,7 +18,8 @@ final class PostMapper extends Mapper
             title: $row->{PostRepository::TITLE_COL},
             content: $row->{PostRepository::CONTENT_COL},
             owner: $row->{PostRepository::OWNER_COL},
-            created_at: $row->{PostRepository::CREATED_AT_COL}
+            created_at: $row->{PostRepository::CREATED_AT_COL},
+            image: $row->{PostRepository::IMAGE_COL},
         );
     }
 

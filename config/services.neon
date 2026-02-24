@@ -2,6 +2,7 @@ services:
     - App\Router\RouterFactory::createRouter
     security.passwords: Nette\Security\Passwords(::PASSWORD_BCRYPT, [cost: 12])
     - App\Model\User\Auth\DbAuthenticator
+    - App\Model\Image\ImageUploadFacade(%wwwDir%)
 
 
 
@@ -14,3 +15,6 @@ search:
         - *Service
         - *Mapper
         - *List
+    - in: %appDir%/Module
+      classes:
+        - *Factory

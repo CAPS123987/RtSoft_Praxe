@@ -43,14 +43,17 @@ class RolePermissionFacade
 
 
     /**
-     * @param int $roleDTO
+     * @param RoleDTO $roleDTO
      * @param array<string,bool> $permissions
      * @return bool
+     * @throws \Exception
      */
     public function updateRolePermissions(RoleDTO $roleDTO, array $permissions): bool {
         $this->database->beginTransaction();
         try {
-            $this->permissionRoleRepository->getAllByX(PermissionRoleRepository::ROLE_ID_COL,$roleDTO->id)->delete();
+            $roleIdInt = strval($roleDTO->id);
+
+            $this->permissionRoleRepository->getAllByX(PermissionRoleRepository::ROLE_ID_COL,$roleIdInt)->delete();
 
             foreach ($permissions as $permission => $value) {
                 if ($value) {

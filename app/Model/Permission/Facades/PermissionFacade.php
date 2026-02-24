@@ -12,8 +12,8 @@ use App\Model\Generics\Facades\DTOFacade;
 final class PermissionFacade extends DTOFacade
 {
     public function __construct(
-        private readonly App\Model\Permission\Repo\PermissionRepository $permissionRepository,
-        private readonly App\Model\Permission\Mapper\PermissionMapper   $permissionMapper,
+        App\Model\Permission\Repo\PermissionRepository $permissionRepository,
+        App\Model\Permission\Mapper\PermissionMapper   $permissionMapper,
     ) {
         parent::__construct($permissionRepository, $permissionMapper);
     }

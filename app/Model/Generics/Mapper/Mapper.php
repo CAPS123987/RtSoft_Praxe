@@ -12,19 +12,19 @@ abstract class Mapper
 {
     /**
      * @param Nette\Database\Table\ActiveRow $row
-     * @return DTO
+     * @return T
      */
-    abstract public function map(Nette\Database\Table\ActiveRow $row) : DTO;
+    abstract public function map(Nette\Database\Table\ActiveRow $row);
 
     /**
      * @param Nette\Database\Table\Selection $selection
-     * @return array<DTO>
+     * @return array<T>
      */
     abstract public function mapAll(Nette\Database\Table\Selection $selection): array;
 
     /**
      * @param array<string,Mixed> $data
-     * @return DTO
+     * @return T
      */
-    abstract public function mapArrayToDTO(array $data): DTO;
+    abstract public function mapArrayToDTO(array $data);
 }

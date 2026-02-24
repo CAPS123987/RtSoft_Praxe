@@ -44,6 +44,9 @@ class PermissionList
     public string $deleteAllPost = self::DELETE_ALL_POST;
     public string $deleteAllComment = self::DELETE_ALL_COMMENT;
 
+    /**
+     * @var array<string>
+     */
     public array $permissions = [
         self::EDIT_USER,
         self::EDIT_PERMISSION,

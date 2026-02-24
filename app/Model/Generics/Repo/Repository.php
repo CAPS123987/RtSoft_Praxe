@@ -38,6 +38,7 @@ abstract class Repository
     public function insert(array $data): array|bool|int|ActiveRow
     {
         $unionArray = $this->columnUnion($data);
+        $unionArray = array_filter($unionArray, fn($value) => $value !== null);
 
         return $this->getAll()->insert($unionArray);
     }

@@ -4,6 +4,7 @@ namespace App\Module\Front\Presenters;
 
 use App\Model\Permission\PermissionList;
 use App\Model\Post\Facades\PostFacade;
+use App\Model\User\Auth\BlogIdentity;
 use Nette\Application\UI\Presenter;
 
 abstract class BasePresenter extends Presenter
@@ -27,6 +28,9 @@ abstract class BasePresenter extends Presenter
         if ($identity === null) {
             return false;
         }
+        if(!$identity instanceof BlogIdentity) {
+            return false;
+        }
         return $identity->hasPermission($permission);
     }
 
@@ -37,6 +41,9 @@ abstract class BasePresenter extends Presenter
         }
         $identity = $this->getUser()->getIdentity();
         if ($identity === null) {
+            return false;
+        }
+        if(!$identity instanceof BlogIdentity) {
             return false;
         }
         return $identity->hasPermission($permission) && $owner === $identity->getId();

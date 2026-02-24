@@ -24,9 +24,15 @@ class RoleDTO implements DTO
      */
     public static function createFromArray(array $data): self
     {
+        /** @var int|null $id */
+        $id = $data[RoleRepository::ID_COL] ?? null;
+
+        /** @var string $name */
+        $name = $data[RoleRepository::NAME_COL] ?? '';
+
         return new self(
-            id: $data[RoleRepository::ID_COL] ?? null,
-            name: $data[RoleRepository::NAME_COL] ?? '',
+            id: $id,
+            name: $name,
         );
     }
 

@@ -28,12 +28,27 @@ class UserDTO implements DTO
      */
     public static function createFromArray(array $data): self
     {
+        /** @var int|null $id */
+        $id = $data[UserRepository::ID_COL] ?? null;
+
+        /** @var string $name */
+        $name = $data[UserRepository::NAME_COL] ?? '';
+
+        /** @var int $role */
+        $role = $data[UserRepository::ROLE_COL] ?? -1;
+
+        /** @var string $password */
+        $password = $data[UserRepository::PASSWORD_COL] ?? '';
+
+        /** @var RoleDTO|null $resolvedRole */
+        $resolvedRole = $data["resolvedRole"] ?? null;
+
         return new self(
-            id: $data[UserRepository::ID_COL] ?? null,
-            name: $data[UserRepository::NAME_COL] ?? '',
-            role: $data[UserRepository::ROLE_COL] ?? -1,
-            password: $data[UserRepository::PASSWORD_COL] ?? '',
-            resolvedRole: $data["resolvedRole"] ?? null,
+            id: $id,
+            name: $name,
+            role: $role,
+            password: $password,
+            resolvedRole: $resolvedRole,
         );
     }
 

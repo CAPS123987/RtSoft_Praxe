@@ -1,0 +1,26 @@
+<form n:name="form" class="form">
+    <ul class="errors" n:ifcontent>
+        <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
+    </ul>
+    {foreach $form->getControls() as $input}
+        {if $input->getOption('type') === 'checkbox'}
+            <div class="mb-2">
+                <label class="font-medium text-md flex items-center gap-2">
+                    {input $input class => 'border-1 border-stone-700 bg-stone-800 rounded-md'}
+                    {$input->getCaption()}
+                </label>
+            </div>
+        {elseif $input->getOption('type') === 'text'}
+            <div class="mb-2">
+                <label class="font-medium text-md">{$input->getCaption()}
+                    {input $input class => 'px-1 py-1 border-1 border-stone-700 bg-stone-800 rounded-md font-normal text-sm'}
+                </label>
+            </div>
+        {elseif $input->getOption('type') === 'button'}
+            <div>
+                {input $input class => 'btn px-2 py-1 btn-bd-primary bg-stone-800 border-stone-700 border-1 rounded-xl font-medium mt-2 text-sm hover:cursor-pointer'}
+            </div>
+        {/if}
+    {/foreach}
+</form>
+

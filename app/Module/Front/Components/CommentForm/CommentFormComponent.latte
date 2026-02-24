@@ -1,0 +1,19 @@
+<form n:name="form" class="form">
+    <ul class="errors" n:ifcontent>
+        <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
+    </ul>
+    <div class="mb-2">
+        <label n:name="email" class="font-medium text-md">Email:
+            <input n:name="email" class="px-1 py-1 border-1 border-stone-700 bg-stone-800 rounded-md font-normal text-sm" placeholder="email">
+        </label>
+    </div>
+    <div class="mb-2">
+        <label n:name="content" class="font-medium text-md">Text:
+            <input n:name="content" class="px-1 py-1 border-1 border-stone-700 bg-stone-800 rounded-md font-normal text-sm" placeholder="komentář">
+        </label>
+    </div>
+    <div>
+        <input n:name="send" class="btn px-2 py-1 btn-bd-primary bg-stone-800 border-stone-700 border-1 rounded-xl font-medium mt-2 text-sm hover:cursor-pointer" type="submit" value="Přidat komentář">
+    </div>
+</form>
+

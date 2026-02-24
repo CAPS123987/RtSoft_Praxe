@@ -12,8 +12,6 @@ use Nette\Forms\Form;
 class RoleEditFormFactory
 {
     public function __construct(
-        private readonly RoleFacade $roleFacade,
-        private readonly PermissionList $perms,
         private readonly RolePermissionFacade $rolePermissionFacade,
         private readonly PermissionFacade $permissionFacade,
     )
@@ -24,11 +22,10 @@ class RoleEditFormFactory
      * needs to add $form->onSuccess[] = [$this, 'editRoleFormSucceeded']; <br>
      * and $form->addSubmit('send', 'Upravit');
      *
-     * @param BasePresenter $presenter
-     * @param int $roleId
+     * @param int|null $roleId
      * @return Form
      */
-    public function create(BasePresenter $presenter, int|null $roleId): Form
+    public function create(int|null $roleId): Form
     {
         $form = new \Nette\Application\UI\Form;
 

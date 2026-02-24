@@ -30,14 +30,35 @@ class CommentDTO implements DTO
      */
     public static function createFromArray(array $data): self
     {
+        /** @var int|null $id */
+        $id = $data[CommentRepository::ID_COL] ?? null;
+
+        /** @var string|null $createdAt */
+        $createdAt = $data[CommentRepository::CREATED_AT_COL] ?? null;
+
+        /** @var int $postId */
+        $postId = $data[CommentRepository::POST_ID_COL] ?? -1;
+
+        /** @var int $ownerId */
+        $ownerId = $data[CommentRepository::OWNER_COL] ?? -1;
+
+        /** @var string $name */
+        $name = $data[CommentRepository::NAME_COL] ?? '';
+
+        /** @var string $email */
+        $email = $data[CommentRepository::EMAIL_COL] ?? '';
+
+        /** @var string $content */
+        $content = $data[CommentRepository::CONTENT_COL] ?? '';
+
         return new self(
-            id: $data[CommentRepository::ID_COL] ?? null,
-            created_at: isset($data[CommentRepository::CREATED_AT_COL]) ? new DateTime($data[CommentRepository::CREATED_AT_COL]) : null,
-            post_id: $data[CommentRepository::POST_ID_COL] ?? -1,
-            owner_id: $data[CommentRepository::OWNER_COL] ?? -1,
-            name: $data[CommentRepository::NAME_COL] ?? '',
-            email: $data[CommentRepository::EMAIL_COL] ?? '',
-            content: $data[CommentRepository::CONTENT_COL] ?? '',
+            id: $id,
+            created_at: $createdAt ? new DateTime($createdAt) : null,
+            post_id: $postId,
+            owner_id: $ownerId,
+            name: $name,
+            email: $email,
+            content: $content,
         );
     }
 

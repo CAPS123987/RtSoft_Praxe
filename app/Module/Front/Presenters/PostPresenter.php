@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace App\Module\Front\Presenters;
 
 use App\Model;
+use App\Model\Like\Facades\PostLikeFacade;
 use App\Model\Permission\PermissionList;
+use App\Module\Front\Components\CommentForm\CommentFormComponent;
+use App\Module\Front\Components\CommentForm\CommentFormComponentFactory;
 use Nette;
-use Nette\Application\UI\Form;
 
 final class PostPresenter extends BasePresenter
 {
     public function __construct(
         private Model\Post\Facades\PostCommentFacade $postCommentFacade,
         private Model\Post\Facades\PostFacade        $postFacade,
-        private Model\Comment\Facades\CommentFacade  $commentFacade,
-        private Model\Comment\Mapper\CommentMapper   $commentMapper,
+        private CommentFormComponentFactory           $commentFormComponentFactory,
+        private PostLikeFacade                        $postLikeFacade,
         private PermissionList $perms,
     ) {
         parent::__construct($perms);
@@ -32,43 +34,33 @@ final class PostPresenter extends BasePresenter
 
         $this->template->post = $post;
         $this->template->comments = $this->postCommentFacade->getPostsComments($post);
+        $this->template->likeCount = $this->postLikeFacade->getLikeCount($id);
+        $this->template->hasLiked = $this->getUser()->isLoggedIn()
+            ? $this->postLikeFacade->hasUserLiked($id, $this->getUser()->getId())
+            : false;
     }
 
-    protected function createComponentCommentForm(): Form
+    public function handleToggleLike(int $id): void
     {
-        $form = new Form; // means Nette\Application\UI\Form
+        if (!$this->getUser()->isLoggedIn()) {
+            $this->sendJson(['error' => 'Musíte být přihlášen.']);
+            return;
+        }
 
-        $form->addEmail('email', 'E-mail:');
+        $userId = $this->getUser()->getId();
+        $liked = $this->postLikeFacade->toggleLike($id, $userId);
+        $count = $this->postLikeFacade->getLikeCount($id);
 
-        $form->addTextArea('content', 'Komentář:')
-            ->setRequired();
-
-        $form->addSubmit('send', 'Publikovat komentář');
-
-        $form->onSuccess[] = [$this, 'commentFormSucceeded'];
-
-        return $form;
+        $this->sendJson([
+            'liked' => $liked,
+            'likeCount' => $count,
+        ]);
     }
 
-    /**
-     * @param array<string,string> $data
-     */
-    public function commentFormSucceeded(array $data): void
+    protected function createComponentCommentForm(): CommentFormComponent
     {
-        $id = $this->getParameter('id');
-        $data["post_id"] = $id;
-
-        $data["name"] = $this->getUser()->getIdentity()->getData()["name"];
-
-        $data["owner_id"] = $this->getUser()->getIdentity()->getId();
-
-
-        $commentDTO = $this->commentMapper->mapArrayToDTO($data);
-
-        $this->commentFacade->insertDTO($commentDTO);
-
-        $this->flashMessage('Děkuji za komentář', 'success');
-        $this->redirect('this');
+        $id = (int) $this->getParameter('id');
+        return $this->commentFormComponentFactory->create($id);
     }
 
 }

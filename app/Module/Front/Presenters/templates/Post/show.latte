@@ -1,54 +1,77 @@
 {block content}
 
 
-<div class="post mb-4 mx-2 p-3 border border-secondary-subtle rounded-2">
-    <h2 n:block="title">{$post->title}</h2>
+<div class="post mb-4 mx-2 px-4 py-2 border-stone-800 border-1 bg-stone-900 rounded-xl">
+    <div class="grid grid-cols-2">
+        <h2 class="text-3xl font-semibold mb-2 mt-2" n:block="title">{$post->title}</h2>
+        <div class="justify-self-end">
+            <a n:href="Edit:edit $post->id"
+                n:if="$presenter->isAllowedWithOwnerOrAll($permList->editAllPost,$permList->editOwnPost, $post->owner)"
+                class="rounded-full px-2 py-1 font-medium text-sm h-fit"
+                >Upravit příspěvek</a>
+            <a n:href="Edit:deletePost $post->id"
+                class="rounded-full px-2 py-1 font-medium text-sm h-fit"
+                n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllPost,$permList->deleteOwnPost, $post->owner)"
+            >Smazat příspěvek</a>
+        </div>
+    </div>
 
-    <div class="date d-inline-flex mb-2 px-1 py-0.5 fw-semibold text-info-emphasis
-    bg-info-subtle border border-info-subtle rounded-2"
-    >{$post->created_at|date:'F j, Y'}</div>
+    <div class="date d-inline-flex mb-2 px-3 py-1 text-sm w-fit font-semibold text-info-emphasis
+            bg-stone-800 border-stone-700 border-1 rounded-full">
+        {$post->created_at|date:'F j, Y'}
+    </div>
+
+    <div n:if="$post->image" class="mb-3">
+        <img src="{$basePath}/{$post->image}" alt="{$post->title}" class="rounded-lg max-w-full" style="max-height: 400px;">
+    </div>
 
     <div class="post">{$post->content}</div>
 
-    <a n:href="Edit:edit $post->id"
-        n:if="$presenter->isAllowedWithOwnerOrAll($permList->editAllPost,$permList->editOwnPost, $post->owner)"
-        >Upravit příspěvek</a>
-    <a n:href="Edit:deletePost $post->id"
-        n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllPost,$permList->deleteOwnPost, $post->owner)"
-    >Smazat příspěvek</a>
+    <div class="mt-4 mb-2 flex items-center gap-2">
+        <button
+            id="like-btn"
+            class="like-btn flex items-center gap-1 px-3 py-1 rounded-full border-1 text-sm font-medium transition-colors
+                   {if $hasLiked}border-red-500 bg-red-500/20 text-red-400{else}border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400{/if}"
+            data-post-id="{$post->id}"
+            data-liked="{$hasLiked ? 'true' : 'false'}"
+            data-url="{link toggleLike!, id => $post->id}"
+            data-logged-in="{$user->isLoggedIn() ? 'true' : 'false'}"
+        >
+            <span class="like-icon">{if $hasLiked}&#10084;{else}&#9825;{/if}</span>
+            <span class="like-count">{$likeCount}</span>
+        </button>
+    </div>
+
 </div>
 
-<div class="mx-2" style="display:grid; gap: 1.5rem; grid-template-columns: 1fr 1fr; grid-template-rows: min-content 1fr">
-    <div class="comment-content mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1 / 3;grid-column: 1/2">
-        <h2>Komentáře:</h2>
+<div class="mx-2 grid gap-4" style="grid-template-columns: 1fr 1fr; grid-template-rows: min-content 1fr">
+    <div class="comment-content mb-4 px-4 py-2 border border-secondary-subtle rounded-xl bg-stone-900 border-1 border-stone-800" style="grid-row: 1 / 3;grid-column: 1/2">
+
+        <h2 class="font-semibold text-lg mb-2">Komentáře:</h2>
+
 
         <div class="comments mb-2">
-            <div n:foreach="$comments as $comment" class="comments comment-content mb-2 p-3 border border-secondary-subtle rounded-2">
-                <h4 class="mb-3"><b>
-                        <a href="mailto:{$comment->email}" n:tag-if="$comment->email">
-                            {$comment->name}
-                        </a></b></h4>
+            <div n:foreach="$comments as $comment" class="comments comment-content mb-4 p-3 border-1 border-stone-700 bg-stone-800 rounded-xl">
+                <div class="grid grid-cols-2">
+                    <h4 class="mb-3"><b>
+                            <a href="mailto:{$comment->email}" n:tag-if="$comment->email">
+                                {$comment->name}
+                            </a></b></h4>
+
+                    <a n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllComment,$permList->deleteOwnComment,$comment->owner_id)"
+                       n:href="Edit:DeleteComment $comment->id"
+                       class="justify-self-end
+                       rounded-full px-2 py-1 font-medium text-sm h-fit">Smazat</a>
+                </div>
 
                 <div class="mb-2">{$comment->content}</div>
-                <a n:if="$presenter->isAllowedWithOwnerOrAll($permList->deleteAllComment,$permList->deleteOwnComment,$comment->owner_id)" n:href="Edit:DeleteComment $comment->id">smazat komentář</a>
             </div>
         </div>
     </div>
-    <div  class="comment-form mb-4 p-3 border border-secondary-subtle rounded-2" style="grid-row: 1;grid-column: 2/3">
-        <form n:if="$presenter->isAllowed($permList->addComment)" n:name=commentForm class=form>
-            <ul class="errors" n:ifcontent>
-                <li n:foreach="$form->getOwnErrors() as $error">{$error}</li>
-            </ul>
-            <div>
-                <label n:name=email>Email: <input n:name=email></label>
-            </div>
-            <div>
-                <label n:name=content>Text: <input n:name=content></label>
-            </div>
-            <div>
-                <input n:name=send class="btn btn-bd-primary bg-primary">
-            </div>
-        </form>
+    <div  class="comment-form mb-4 p-3 border-1 border-stone-800 bg-stone-900 rounded-xl" style="grid-row: 1;grid-column: 2/3">
+        <div n:if="$presenter->isAllowed($permList->addComment)">
+            {control commentForm}
+        </div>
         <h2 n:if="!$presenter->isAllowed($permList->addComment)">Pro přidání komentáře se musíte přihlásit</h2>
     </div>
 </div>

@@ -9,7 +9,6 @@ use App\Model\User\DTO\UserDTO;
 class UserRoleFacade
 {
     public function __construct(
-        private readonly UserFacade $userFacade,
         private readonly RoleFacade $roleFacade
     ) {
 

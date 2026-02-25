@@ -1,9 +1,26 @@
 /// <reference types="cypress" />
 
 describe('Nahrávání obrázku k postu', () => {
+  const createdPostIds = [];
 
   beforeEach(() => {
     cy.login('admin');
+  });
+
+  afterEach(function () {
+    if (this.createdPostId) {
+      createdPostIds.push(this.createdPostId);
+    }
+  });
+
+  after(() => {
+    // Úklid – smažeme všechny vytvořené posty
+    if (createdPostIds.length > 0) {
+      cy.login('admin');
+      createdPostIds.forEach((id) => {
+        cy.deleteTestPost(id);
+      });
+    }
   });
 
   it('formulář pro vytvoření postu obsahuje input pro obrázek', () => {
@@ -17,7 +34,6 @@ describe('Nahrávání obrázku k postu', () => {
     cy.get('input[name*="title"]').type(title);
     cy.get('textarea[name*="content"]').type('Post s testovacím obrázkem.');
 
-    // Vytvoříme testovací obrázek (1x1 PNG)
     cy.get('input[name*="postImage"]').selectFile({
       contents: Cypress.Buffer.from(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
@@ -29,6 +45,12 @@ describe('Nahrávání obrázku k postu', () => {
 
     cy.get('input[type="submit"]').click();
     cy.expectToast('úspěšně');
+
+    // Uložíme ID pro úklid
+    cy.url().then((url) => {
+      const postId = url.split('/').pop();
+      cy.wrap(postId).as('createdPostId');
+    });
   });
 
   it('po vytvoření postu s obrázkem je obrázek viditelný na detailu', () => {
@@ -51,6 +73,12 @@ describe('Nahrávání obrázku k postu', () => {
 
     // Na detailu postu by měl být obrázek
     cy.get('.post img').should('be.visible');
+
+    // Uložíme ID pro úklid
+    cy.url().then((url) => {
+      const postId = url.split('/').pop();
+      cy.wrap(postId).as('createdPostId');
+    });
   });
 
   it('vytvoření postu bez obrázku – obrázek se nezobrazí', () => {
@@ -63,10 +91,15 @@ describe('Nahrávání obrázku k postu', () => {
     cy.expectToast('úspěšně');
     // Na detailu by neměl být žádný obrázek postu
     cy.get('.post img').should('not.exist');
+
+    // Uložíme ID pro úklid
+    cy.url().then((url) => {
+      const postId = url.split('/').pop();
+      cy.wrap(postId).as('createdPostId');
+    });
   });
 
   it('editace postu – nahrání nového obrázku přepíše starý', () => {
-    // Vytvoříme post s obrázkem
     const title = `Post img replace ${Date.now()}`;
     cy.visit('/edit/create');
     cy.get('input[name*="title"]').type(title);
@@ -81,6 +114,12 @@ describe('Nahrávání obrázku k postu', () => {
     });
     cy.get('input[type="submit"]').click();
     cy.expectToast('úspěšně');
+
+    // Uložíme ID pro úklid
+    cy.url().then((url) => {
+      const postId = url.split('/').pop();
+      cy.wrap(postId).as('createdPostId');
+    });
 
     // Editujeme a nahrajeme nový obrázek
     cy.contains('a', 'Upravit příspěvek').click();

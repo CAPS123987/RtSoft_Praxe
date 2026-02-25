@@ -46,5 +46,12 @@ final class PostLikeRepository extends Repository
             ->where(self::USER_ID_COL, $userId)
             ->delete();
     }
+
+    public function deleteByUserId(int $userId): int
+    {
+        return $this->getAll()
+            ->where(self::USER_ID_COL, $userId)
+            ->delete();
+    }
 }
 

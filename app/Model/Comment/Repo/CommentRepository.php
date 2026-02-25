@@ -46,4 +46,9 @@ final class CommentRepository extends Repository
     {
         return $this->getAll()->where(self::POST_ID_COL . ' = ?', $postId);
     }
+
+    function getCommentsByOwnerId(int $ownerId): Nette\Database\Table\Selection
+    {
+        return $this->getAll()->where(self::OWNER_COL . ' = ?', $ownerId);
+    }
 }

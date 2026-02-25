@@ -27,6 +27,11 @@ final class PostRepository extends Repository
             ->order(self::CREATED_AT_COL . ' DESC');
     }
 
+    public function getPostsByOwnerId(int $ownerId): Nette\Database\Table\Selection
+    {
+        return $this->getAll()->where(self::OWNER_COL . ' = ?', $ownerId);
+    }
+
     function getTableName(): string
     {
         return self::TABLE_NAME;

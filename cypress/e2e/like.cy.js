@@ -1,10 +1,28 @@
 /// <reference types="cypress" />
 
 describe('Like / Unlike postu', () => {
+  let testPostId = null;
+  const testPostTitle = `LikeTest_${Date.now()}`;
+
+  before(() => {
+    // Vytvoříme vlastní testovací post pro like testy
+    cy.login('admin');
+    cy.createTestPost(testPostTitle, 'Post pro testování like/unlike.');
+    cy.get('@createdPostId').then((id) => {
+      testPostId = id;
+    });
+  });
+
+  after(() => {
+    // Úklid – smažeme testovací post
+    if (testPostId) {
+      cy.login('admin');
+      cy.deleteTestPost(testPostId);
+    }
+  });
 
   it('nepřihlášený uživatel – klik zobrazí toast error', () => {
-    cy.visit('/');
-    cy.get('.post h2 a').first().click();
+    cy.visit(`/post/show/${testPostId}`);
 
     cy.get('#like-btn').should('be.visible');
     cy.get('#like-btn').should('have.attr', 'data-logged-in', 'false');
@@ -15,8 +33,7 @@ describe('Like / Unlike postu', () => {
 
   it('přihlášený uživatel může likovat post', () => {
     cy.login('admin');
-    cy.visit('/');
-    cy.get('.post h2 a').first().click();
+    cy.visit(`/post/show/${testPostId}`);
 
     cy.get('#like-btn').should('have.attr', 'data-logged-in', 'true');
 
@@ -39,8 +56,7 @@ describe('Like / Unlike postu', () => {
 
   it('přihlášený uživatel může unlikovat post', () => {
     cy.login('admin');
-    cy.visit('/');
-    cy.get('.post h2 a').first().click();
+    cy.visit(`/post/show/${testPostId}`);
 
     // Klikneme dvakrát – like a pak unlike
     cy.get('#like-btn').click();
@@ -60,8 +76,7 @@ describe('Like / Unlike postu', () => {
 
   it('ikona srdce se mění podle stavu', () => {
     cy.login('admin');
-    cy.visit('/');
-    cy.get('.post h2 a').first().click();
+    cy.visit(`/post/show/${testPostId}`);
 
     cy.get('#like-btn').invoke('attr', 'data-liked').then((likedBefore) => {
       cy.get('#like-btn').click();
@@ -77,4 +92,3 @@ describe('Like / Unlike postu', () => {
   });
 
 });
-

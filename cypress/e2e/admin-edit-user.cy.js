@@ -1,9 +1,20 @@
 /// <reference types="cypress" />
 
 describe('Admin – editace uživatele', () => {
+  const createdUsers = [];
 
   beforeEach(() => {
     cy.login('admin');
+  });
+
+  after(() => {
+    // Úklid – smažeme všechny vytvořené uživatele
+    if (createdUsers.length > 0) {
+      cy.login('admin');
+      createdUsers.forEach((username) => {
+        cy.deleteTestUser(username);
+      });
+    }
   });
 
   it('navigace na editaci uživatele ze seznamu', () => {
@@ -39,6 +50,7 @@ describe('Admin – editace uživatele', () => {
     cy.contains(username).parent().contains('a', 'Upravit').click();
 
     const newName = `edited_${Date.now()}`;
+    createdUsers.push(newName); // Sledujeme nové jméno (po přejmenování)
     cy.get('input[name*="name"]').clear().type(newName);
     cy.get('input[type="submit"]').first().click();
 

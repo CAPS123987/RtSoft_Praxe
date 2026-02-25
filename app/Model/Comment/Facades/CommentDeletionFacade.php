@@ -65,4 +65,13 @@ final class CommentDeletionFacade
         }
         $comments->delete();
     }
+
+    public function deleteCommentsByOwnerId(int $ownerId): void
+    {
+        $comments = $this->commentRepository->getCommentsByOwnerId($ownerId);
+        foreach ($comments as $comment) {
+            $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment->toArray());
+        }
+        $comments->delete();
+    }
 }

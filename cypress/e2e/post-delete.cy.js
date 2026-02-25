@@ -3,15 +3,11 @@
 describe('Smazání postu', () => {
 
   it('admin může smazat post', () => {
-    // Nejprve vytvoříme nový post, abychom nemazali existující data
+    // Vytvoříme nový post, abychom nemazali existující data
     cy.login('admin');
 
     const title = `Post ke smazání ${Date.now()}`;
-    cy.visit('/edit/create');
-    cy.get('input[name*="title"]').type(title);
-    cy.get('textarea[name*="content"]').type('Tento post bude smazán.');
-    cy.get('input[type="submit"]').click();
-    cy.expectToast('úspěšně');
+    cy.createTestPost(title, 'Tento post bude smazán.');
 
     // Nyní najdeme post a smažeme ho
     cy.visit('/');
@@ -27,16 +23,10 @@ describe('Smazání postu', () => {
     // Nejprve jako admin vytvoříme post a zjistíme jeho URL
     cy.login('admin');
     const title = `Post protect ${Date.now()}`;
-    cy.visit('/edit/create');
-    cy.get('input[name*="title"]').type(title);
-    cy.get('textarea[name*="content"]').type('Post chráněný proti smazání.');
-    cy.get('input[type="submit"]').click();
-    cy.expectToast('úspěšně');
+    cy.createTestPost(title, 'Post chráněný proti smazání.');
 
     // Zjistíme ID postu z URL
-    cy.url().then((url) => {
-      const postId = url.split('/').pop();
-
+    cy.get('@createdPostId').then((postId) => {
       // Odhlásíme se
       cy.logout();
 
@@ -47,17 +37,17 @@ describe('Smazání postu', () => {
       cy.url().should('satisfy', (u) => {
         return u.includes('/sign/in') || u.includes('/homepage');
       });
+
+      // Úklid – přihlásíme se a smažeme testovací post
+      cy.login('admin');
+      cy.deleteTestPost(postId);
     });
   });
 
   it('po smazání postu se post nezobrazuje na hlavní stránce', () => {
     cy.login('admin');
     const title = `Post gone ${Date.now()}`;
-    cy.visit('/edit/create');
-    cy.get('input[name*="title"]').type(title);
-    cy.get('textarea[name*="content"]').type('Tento post zmizí.');
-    cy.get('input[type="submit"]').click();
-    cy.expectToast('úspěšně');
+    cy.createTestPost(title, 'Tento post zmizí.');
 
     // Smažeme post
     cy.contains('a', 'Smazat příspěvek').click();

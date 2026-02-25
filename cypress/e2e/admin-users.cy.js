@@ -1,9 +1,20 @@
 /// <reference types="cypress" />
 
 describe('Admin – správa uživatelů', () => {
+  const createdUsers = [];
 
   beforeEach(() => {
     cy.login('admin');
+  });
+
+  after(() => {
+    // Úklid – smažeme všechny vytvořené uživatele
+    if (createdUsers.length > 0) {
+      cy.login('admin');
+      createdUsers.forEach((username) => {
+        cy.deleteTestUser(username);
+      });
+    }
   });
 
   it('zobrazí seznam uživatelů', () => {
@@ -33,6 +44,7 @@ describe('Admin – správa uživatelů', () => {
   it('přidání uživatele přes admin panel', () => {
     cy.visit('/admin/');
     const username = `testuser_${Date.now()}`;
+    createdUsers.push(username);
 
     cy.get('input[name*="name"]').first().clear().type(username);
     cy.get('input[name*="password"]').first().clear().type('testpassword123');

@@ -12,6 +12,9 @@
             <h2>Jméno: {$userDTO->name}</h2>
             <p>Role: {$userDTO->resolvedRole->name}</p>
             <a n:if="$presenter->isAllowed($permList->editUser)" n:href="Admin:editUser $userDTO->id">Upravit</a>
+            <a n:if="$presenter->isAllowed($permList->deleteUser)" n:href="Admin:deleteUser $userDTO->id"
+               class="text-red-500 ml-2"
+               onclick="return confirm('Opravdu chcete smazat uživatele {$userDTO->name}? Budou smazány i všechny jeho příspěvky, komentáře a liky.')">Smazat</a>
         </div>
     </div>
 

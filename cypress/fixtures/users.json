@@ -6,6 +6,10 @@
   "user": {
     "username": "kuba",
     "password": "kuba"
+  },
+  "editor": {
+    "username": "editor",
+    "password": "editor"
   }
 }
 

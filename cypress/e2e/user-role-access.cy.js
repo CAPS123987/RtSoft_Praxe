@@ -51,6 +51,39 @@ describe('Přístup na základě uživatelských rolí', () => {
 
   });
 
+  describe('Editor uživatel', () => {
+
+    beforeEach(() => {
+      cy.login('editor');
+    });
+
+    it('editor se úspěšně přihlásí', () => {
+      cy.contains('a', 'Odhlásit').should('be.visible');
+    });
+
+    it('editor nevidí odkaz Admin v navigaci', () => {
+      cy.visit('/');
+      cy.contains('a', 'Admin').should('not.exist');
+    });
+
+    it('editor nemá přístup do admin panelu', () => {
+      cy.visit('/admin/');
+      cy.url().should('include', '/sign/in');
+    });
+
+    it('editor vidí tlačítko "Vytvořit příspěvek"', () => {
+      cy.visit('/');
+      cy.contains('a', 'Vytvořit příspěvek').should('be.visible');
+    });
+
+    it('editor může zobrazit detail postu', () => {
+      cy.visit('/');
+      cy.get('.post h2 a').first().click();
+      cy.url().should('include', '/post/show');
+    });
+
+  });
+
   describe('Admin uživatel', () => {
 
     beforeEach(() => {

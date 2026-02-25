@@ -22,6 +22,7 @@ class PermissionList
     public const string DELETE_OWN_COMMENT = 'deleteOwnComment';
     public const string DELETE_ALL_POST = 'deleteAllPost';
     public const string DELETE_ALL_COMMENT = 'deleteAllComment';
+    public const string DELETE_USER = 'deleteUser';
 
 
     public string $addPost = self::ADD_POST;
@@ -43,6 +44,7 @@ class PermissionList
     public string $deleteOwnComment = self::DELETE_OWN_COMMENT;
     public string $deleteAllPost = self::DELETE_ALL_POST;
     public string $deleteAllComment = self::DELETE_ALL_COMMENT;
+    public string $deleteUser = self::DELETE_USER;
 
     /**
      * @var array<string>
@@ -58,6 +60,7 @@ class PermissionList
         self::DELETE_OWN_COMMENT,
         self::DELETE_ALL_POST,
         self::DELETE_ALL_COMMENT,
+        self::DELETE_USER,
         self::ADMIN_PANEL,
         self::ADD_USER,
         self::ADD_POST,

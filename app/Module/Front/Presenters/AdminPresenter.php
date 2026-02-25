@@ -7,6 +7,7 @@ namespace App\Module\Front\Presenters;
 use App\Model\Permission\PermissionList;
 use App\Model\Role\Facades\RoleFacade;
 use App\Model\Role\Facades\RolePermissionFacade;
+use App\Model\User\Facades\UserDeletionFacade;
 use App\Model\User\Facades\UserFacade;
 use App\Module\Front\Components\AddUser\AddUserComponent;
 use App\Module\Front\Components\AddUser\AddUserComponentFactory;
@@ -25,6 +26,7 @@ class AdminPresenter extends BasePresenter
         private RoleComponentFactory $roleComponentFactory,
         private AddUserComponentFactory $addUserComponentFactory,
         private EditUserComponentFactory $editUserComponentFactory,
+        private UserDeletionFacade $userDeletionFacade,
     ) {
         parent::__construct($perms);
     }
@@ -53,6 +55,36 @@ class AdminPresenter extends BasePresenter
     {
         $userDTO = $this->userFacade->getDTOById($id);
         $this->template->userDTO = $userDTO;
+    }
+
+    public function actionDeleteUser(int $id): void
+    {
+        if (!parent::isAllowed($this->perms->deleteUser)) {
+            $this->flashMessage('Nemáte oprávnění smazat uživatele.', 'error');
+            $this->redirect('Admin:userList');
+        }
+
+        // Nesmí smazat sám sebe
+        if ($this->getUser()->getId() === $id) {
+            $this->flashMessage('Nemůžete smazat sám sebe.', 'error');
+            $this->redirect('Admin:userList');
+        }
+
+        $user = null;
+        try {
+            $user = $this->userFacade->getDTOById($id);
+        } catch (\RuntimeException $e) {
+            $this->flashMessage('Uživatel nebyl nalezen.', 'error');
+            $this->redirect('Admin:userList');
+        }
+
+        if ($user !== null && $this->userDeletionFacade->deleteUser($id)) {
+            $this->flashMessage('Uživatel ' . $user->name . ' byl úspěšně smazán.', 'success');
+        } else {
+            $this->flashMessage('Při mazání uživatele došlo k chybě.', 'error');
+        }
+
+        $this->redirect('Admin:userList');
     }
 
     public function renderRoleList()

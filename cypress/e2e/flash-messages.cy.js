@@ -1,6 +1,23 @@
 /// <reference types="cypress" />
 
 describe('Flash zprávy (toast notifikace)', () => {
+  const createdPostIds = [];
+
+  afterEach(function () {
+    if (this.createdPostId) {
+      createdPostIds.push(this.createdPostId);
+    }
+  });
+
+  after(() => {
+    // Úklid – smažeme všechny vytvořené posty
+    if (createdPostIds.length > 0) {
+      cy.login('admin');
+      createdPostIds.forEach((id) => {
+        cy.deleteTestPost(id);
+      });
+    }
+  });
 
   it('po úspěšném odhlášení se zobrazí toast zpráva', () => {
     cy.login('admin');
@@ -11,12 +28,7 @@ describe('Flash zprávy (toast notifikace)', () => {
   it('po vytvoření postu se zobrazí úspěšný toast', () => {
     cy.login('admin');
     const title = `Toast test ${Date.now()}`;
-    cy.visit('/edit/create');
-    cy.get('input[name*="title"]').type(title);
-    cy.get('textarea[name*="content"]').type('Testovací obsah.');
-    cy.get('input[type="submit"]').click();
-
-    cy.expectToast('úspěšně');
+    cy.createTestPost(title);
   });
 
   it('toast zmizí po určité době', () => {
@@ -24,7 +36,7 @@ describe('Flash zprávy (toast notifikace)', () => {
     cy.logout();
 
     // Toast by se měl zobrazit
-    cy.get('[data-sonner-toast]', { timeout: 8000 }).should('exist');
+    cy.get('[data-sonner-toast]', { timeout: 10000 }).should('exist');
 
     // Po čekání by měl zmizet (duration je 2500ms v layout, ale nastavíme na 7000ms na admin stránkách)
     cy.wait(10000);

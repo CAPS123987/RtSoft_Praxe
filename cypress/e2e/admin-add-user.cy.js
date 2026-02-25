@@ -1,9 +1,20 @@
 /// <reference types="cypress" />
 
 describe('Admin – přidání uživatele', () => {
+  const createdUsers = [];
 
   beforeEach(() => {
     cy.login('admin');
+  });
+
+  after(() => {
+    // Úklid – smažeme všechny vytvořené uživatele
+    if (createdUsers.length > 0) {
+      cy.login('admin');
+      createdUsers.forEach((username) => {
+        cy.deleteTestUser(username);
+      });
+    }
   });
 
   it('formulář pro přidání uživatele je viditelný na admin stránce', () => {
@@ -16,6 +27,7 @@ describe('Admin – přidání uživatele', () => {
 
   it('úspěšné přidání nového uživatele', () => {
     const username = `newuser_${Date.now()}`;
+    createdUsers.push(username);
     cy.visit('/admin/');
     cy.get('input[name*="name"]').first().clear().type(username);
     cy.get('input[name*="password"]').first().clear().type('heslo123');
@@ -49,6 +61,7 @@ describe('Admin – přidání uživatele', () => {
 
   it('nově přidaný uživatel se zobrazí v seznamu uživatelů', () => {
     const username = `listuser_${Date.now()}`;
+    createdUsers.push(username);
     cy.visit('/admin/');
     cy.get('input[name*="name"]').first().clear().type(username);
     cy.get('input[name*="password"]').first().clear().type('heslo123');

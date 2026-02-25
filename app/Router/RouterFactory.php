@@ -14,8 +14,9 @@ final class RouterFactory
 
 	public static function createRouter(): RouteList
 	{
-		$router = new RouteList;
-		$router->addRoute('<presenter>/<action>', 'Front:Homepage:default');
-		return $router;
+        $router = new RouteList;
+        $front = $router->withModule('Front');
+        $front->addRoute('<presenter>/<action>[/<id>]', 'Homepage:default');
+        return $router;
 	}
 }

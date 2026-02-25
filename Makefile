@@ -52,3 +52,12 @@ bash b:
 # composer install
 composer-install:
 	docker exec -it "${CONTAINER_NAME}" bash -c "composer install"
+
+# spustí všechny cypress testy headless
+all:
+	npx cypress run
+
+# spustí cypress v GUI módu
+cypress-gui:
+	npx cypress open
+

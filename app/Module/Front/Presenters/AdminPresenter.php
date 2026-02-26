@@ -7,6 +7,7 @@ namespace App\Module\Front\Presenters;
 use App\Model\Permission\PermissionList;
 use App\Model\Role\Facades\RoleFacade;
 use App\Model\Role\Facades\RolePermissionFacade;
+use App\Model\Like\Facades\UserLikeStatsFacade;
 use App\Model\User\Facades\UserDeletionFacade;
 use App\Model\User\Facades\UserFacade;
 use App\Module\Front\Components\AddUser\AddUserComponent;
@@ -27,6 +28,7 @@ class AdminPresenter extends BasePresenter
         private AddUserComponentFactory $addUserComponentFactory,
         private EditUserComponentFactory $editUserComponentFactory,
         private UserDeletionFacade $userDeletionFacade,
+        private UserLikeStatsFacade $userLikeStatsFacade,
     ) {
         parent::__construct($perms);
     }
@@ -49,6 +51,7 @@ class AdminPresenter extends BasePresenter
     public function renderUserList()
     {
         $this->template->users = $this->userFacade->getAllDTO();
+        $this->template->userLikeStats = $this->userLikeStatsFacade->getAllUsersLikeStats();
     }
 
     public function renderEditUser(int $id)

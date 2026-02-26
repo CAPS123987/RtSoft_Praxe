@@ -11,7 +11,9 @@
         <div n:foreach="$users as $userDTO" class="mx-2 mb-4 p-3 border border-secondary-subtle rounded-2">
             <h2>Jméno: {$userDTO->name}</h2>
             <p>Role: {$userDTO->resolvedRole->name}</p>
-            <p>Poslední přihlášení: {$userDTO->lastLogin|date:'h:i:s A m ,F j, Y'}</p>
+            <p>Poslední přihlášení: {$userDTO->lastLogin ? $userDTO->lastLogin|date:'h:i:s A, F j, Y'}</p>
+            <p>❤ Liky na příspěvcích: {$userLikeStats[$userDTO->id]['postLikes'] ?? 0}</p>
+            <p>💬 Liky na komentářích: {$userLikeStats[$userDTO->id]['commentLikes'] ?? 0}</p>
             <a n:if="$presenter->isAllowed($permList->editUser)" n:href="Admin:editUser $userDTO->id">Upravit</a>
             <a n:if="$presenter->isAllowed($permList->deleteUser)" n:href="Admin:deleteUser $userDTO->id"
                class="text-red-500 ml-2"

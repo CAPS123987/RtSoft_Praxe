@@ -14,6 +14,7 @@ final class PostFacade extends DTOFacade
     public function __construct(
         private readonly App\Model\Post\Repo\PostRepository $postRepository,
         private readonly App\Model\Post\Mapper\PostMapper   $postMapper,
+        private readonly App\Model\Post\PostPaginator $postPaginator,
     ) {
         parent::__construct($postRepository, $postMapper);
     }
@@ -24,6 +25,13 @@ final class PostFacade extends DTOFacade
     public function getPublicArticles(): array
     {
         return $this->postMapper->mapAll($this->postRepository->getPublicArticles());
+    }
+
+    public function getPublicArticlesPage(int $page): array
+    {
+        $selection = $this->postRepository->getPublicArticles();
+        $paginatedSelection = $this->postPaginator->addPaginationToQuery($selection, $page);
+        return $this->postMapper->mapAll($paginatedSelection);
     }
 
 }

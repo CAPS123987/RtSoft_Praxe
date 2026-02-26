@@ -26,6 +26,7 @@ final class UserMapper extends Mapper
             role: $row->{UserRepository::ROLE_COL},
             password: $row->{UserRepository::PASSWORD_COL},
             resolvedRole: $this->roleFacade->getDTOById(id: $row->{UserRepository::ROLE_COL}),
+            lastLogin: $row->{UserRepository::LAST_LOGIN_COL} ? Nette\Utils\DateTime::from($row->{UserRepository::LAST_LOGIN_COL}) : null,
         );
     }
 

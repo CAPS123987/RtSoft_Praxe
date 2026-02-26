@@ -15,6 +15,7 @@ search:
         - *Service
         - *Mapper
         - *List
+        - *Paginator
     - in: %appDir%/Module
       classes:
         - *Factory

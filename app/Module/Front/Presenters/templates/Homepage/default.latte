@@ -7,21 +7,36 @@
                                                             bg-stone-900 border-1 font-semibold
                                                             px-4 py-2 ml-4 mb-4 mt-2 block w-fit">Vytvořit příspěvek</a>
 
-    <div class="grid grid-cols-[repeat(calc(100vw_/_400px),1fr)] gap-4 mx-4">
-        <div n:foreach="$posts as $post" class="post px-4 py-2 border border-stone-800 bg-stone-900 rounded-xl">
-            <h2 class="font-semibold text-lg mb-1 hover:cursor-pointer"><a n:href="Post:show $post->id">{$post->title}</a></h2>
+    {snippet postsSnipet}
+        <div class="ajax grid grid-cols-[repeat(calc(100vw_/_400px),1fr)] gap-4 mx-4">
+            <div n:foreach="$posts as $post" class="post px-4 py-2 border border-stone-800 bg-stone-900 rounded-xl">
+                <h2 class="font-semibold text-lg mb-1 hover:cursor-pointer"><a n:href="Post:show $post->id">{$post->title}</a></h2>
 
-            <div class="date d-inline-flex mb-2 px-3 py-1 text-xs w-fit font-semibold text-info-emphasis
-            bg-stone-800 border-stone-700 border-1 rounded-full">
-                {$post->created_at|date:'F j, Y'}
+                <div class="date d-inline-flex mb-2 px-3 py-1 text-xs w-fit font-semibold text-info-emphasis
+                bg-stone-800 border-stone-700 border-1 rounded-full">
+                    {$post->created_at|date:'F j, Y'}
+                </div>
+
+                <div n:if="$post->image" class="mb-2">
+                    <img src="{$basePath}/{$post->image}" alt="{$post->title}" class="rounded-lg w-full object-cover" style="max-height: 200px;">
+                </div>
+
+                <div class="text-stone-400">{$post->content|truncate:256}</div>
             </div>
-
-            <div n:if="$post->image" class="mb-2">
-                <img src="{$basePath}/{$post->image}" alt="{$post->title}" class="rounded-lg w-full object-cover" style="max-height: 200px;">
-            </div>
-
-            <div class="text-stone-400">{$post->content|truncate:256}</div>
         </div>
-    </div>
+    {/snippet}
+
+    {snippet previousPageSnipet}
+    <a n:if="$page > 1"
+            class="ajax btn px-2 py-1 btn-bd-primary bg-stone-800 border-stone-700 border-1 rounded-xl font-medium mt-2 text-sm hover:cursor-pointer"
+            n:href="previousPage!">
+        Předchozí strana</a>
+    {/snippet}
+    {snippet nextPageSnipet}
+        <a
+            class="ajax btn px-2 py-1 btn-bd-primary bg-stone-800 border-stone-700 border-1 rounded-xl font-medium mt-2 text-sm hover:cursor-pointer"
+            n:href="nextPage!">
+            Další strana</a>
+    {/snippet}
 
 {/block}

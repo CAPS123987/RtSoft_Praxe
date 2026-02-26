@@ -3,6 +3,7 @@
 namespace App\Model\Comment\Facades;
 
 use App\Model\Comment\DTO\CommentDTO;
+use App\Model\Like\Repo\CommentLikeRepository;
 use App\Model\Repos;
 use Nette;
 
@@ -11,6 +12,7 @@ final class CommentDeletionFacade
     public function __construct(
         private readonly \App\Model\Deletion\Repo\DeletionRepository $deletionRepository,
         private readonly \App\Model\Comment\Repo\CommentRepository   $commentRepository,
+        private readonly CommentLikeRepository                       $commentLikeRepository,
         private readonly Nette\Database\Explorer                     $database,
     ) {
     }
@@ -33,6 +35,7 @@ final class CommentDeletionFacade
         if ($comment === null) {
             throw new \RuntimeException("Comment with id {$id} not found");
         }
+        $this->commentLikeRepository->deleteByCommentId($id);
         $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment->toArray());
         $this->commentRepository->delete($id);
     }
@@ -61,6 +64,7 @@ final class CommentDeletionFacade
     {
         $comments = $this->commentRepository->getCommentsByPostId($postId);
         foreach ($comments as $comment) {
+            $this->commentLikeRepository->deleteByCommentId($comment->id);
             $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment->toArray());
         }
         $comments->delete();
@@ -70,6 +74,7 @@ final class CommentDeletionFacade
     {
         $comments = $this->commentRepository->getCommentsByOwnerId($ownerId);
         foreach ($comments as $comment) {
+            $this->commentLikeRepository->deleteByCommentId($comment->id);
             $this->deletionRepository->logDeletion(\App\Model\Comment\Repo\CommentRepository::TABLE_NAME, $comment->toArray());
         }
         $comments->delete();

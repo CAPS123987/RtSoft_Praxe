@@ -4,6 +4,7 @@ namespace App\Model\User\Facades;
 
 use App\Model\Comment\Facades\CommentDeletionFacade;
 use App\Model\Deletion\Repo\DeletionRepository;
+use App\Model\Like\Repo\CommentLikeRepository;
 use App\Model\Like\Repo\PostLikeRepository;
 use App\Model\Post\Facades\PostFacade;
 use App\Model\Post\Repo\PostRepository;
@@ -16,6 +17,7 @@ final class UserDeletionFacade
         private readonly DeletionRepository      $deletionRepository,
         private readonly CommentDeletionFacade    $commentDeletionFacade,
         private readonly PostLikeRepository       $postLikeRepository,
+        private readonly CommentLikeRepository    $commentLikeRepository,
         private readonly UserFacade               $userFacade,
         private readonly PostFacade               $postFacade,
         private readonly PostRepository           $postRepository,
@@ -25,8 +27,8 @@ final class UserDeletionFacade
 
     /**
      * Smaže uživatele včetně všech jeho relací:
-     * 1. Smaže komentáře uživatele
-     * 2. Smaže liky uživatele
+     * 1. Smaže komentáře uživatele (včetně jejich liků)
+     * 2. Smaže liky uživatele (post likes i comment likes)
      * 3. Smaže posty uživatele (a jejich komentáře a liky)
      * 4. Zaloguje smazání a smaže samotného uživatele
      */
@@ -36,11 +38,12 @@ final class UserDeletionFacade
         try {
             $user = $this->userFacade->getDTOById($userId);
 
-            // 1. Smazat komentáře, které uživatel napsal
+            // 1. Smazat komentáře, které uživatel napsal (včetně comment likes)
             $this->commentDeletionFacade->deleteCommentsByOwnerId($userId);
 
-            // 2. Smazat liky uživatele
+            // 2. Smazat liky uživatele (post likes i comment likes)
             $this->postLikeRepository->deleteByUserId($userId);
+            $this->commentLikeRepository->deleteByUserId($userId);
 
             // 3. Smazat posty uživatele (kaskádově smaže i komentáře a liky k těm postům)
             $posts = $this->postRepository->getPostsByOwnerId($userId);

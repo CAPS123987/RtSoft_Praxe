@@ -88,18 +88,23 @@ describe('Admin – smazání uživatele (oprávnění deleteUser)', () => {
 
     it('admin nemůže smazat sám sebe', () => {
       cy.login('admin');
-      cy.visit('/admin/user-list');
 
-      // Najdeme admina v seznamu – neměl by tam mít tlačítko smazat pro sebe,
-      // nebo pokud ano, backend to odmítne
+      // Zjistíme ID admina z URL jeho editace, nebo přímo přes /admin/delete-user
+      // a ověříme, že backend odmítne smazání se správnou hláškou
       cy.fixture('users').then((users) => {
         const adminName = users.admin.username;
-        cy.contains('[class*="border"]', adminName).then(($el) => {
-          if ($el.find('a:contains("Smazat")').length > 0) {
-            // Klikneme na smazat – backend by měl odmítnout
-            cy.wrap($el).contains('a', 'Smazat').click();
+
+        cy.visit('/admin/user-list');
+        cy.contains('[class*="border"]', adminName).within(() => {
+          // Zjistíme ID admina z href editačního odkazu
+          cy.get('a[href*="edit-user"]').invoke('attr', 'href').then((href) => {
+            const adminId = href.split('/').pop();
+
+            // Pokusíme se smazat admina přímo přes URL (obejdeme confirm dialog)
+            cy.visit(`/admin/delete-user/${adminId}`);
+            cy.url().should('include', '/admin/user-list');
             cy.expectToast('smazat sám sebe');
-          }
+          });
         });
       });
     });
@@ -155,11 +160,15 @@ describe('Admin – smazání uživatele (oprávnění deleteUser)', () => {
 
     it('uživatel bez deleteUser je přesměrován při pokusu o smazání přes URL', () => {
       cy.loginWith(userName, userPass);
-      // Zkusíme smazat admina přes URL (ID 1)
-      cy.visit('/admin/delete-user/1');
-      // Měl by být přesměrován s chybovou hláškou
-      cy.url().should('include', '/admin/user-list');
-      cy.expectToast('oprávnění');
+      // Zkusíme smazat libovolného uživatele přes URL – zjistíme ID z user-listu
+      cy.visit('/admin/user-list');
+      cy.get('a[href*="edit-user"]').first().invoke('attr', 'href').then((href) => {
+        const userId = href.split('/').pop();
+        cy.visit(`/admin/delete-user/${userId}`);
+        // Měl by být přesměrován s chybovou hláškou
+        cy.url().should('include', '/admin/user-list');
+        cy.expectToast('oprávnění');
+      });
     });
 
   });

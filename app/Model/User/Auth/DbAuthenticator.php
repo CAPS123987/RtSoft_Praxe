@@ -13,6 +13,7 @@ class DbAuthenticator implements Nette\Security\Authenticator
         private Nette\Security\Passwords $passwords,
         private RolePermissionFacade $rolePermissionFacade,
         private UserFacade $userFacade,
+        private UserRepository $userRepository,
     ) {
     }
 
@@ -28,12 +29,19 @@ class DbAuthenticator implements Nette\Security\Authenticator
             throw new Nette\Security\AuthenticationException('Invalid password.');
         }
 
+        // Aktualizujeme last_login na aktuální čas
+        if ($user->id !== null) {
+            $this->userRepository->update($user->id, [
+                UserRepository::LAST_LOGIN_COL => new \DateTime(),
+            ]);
+        }
+
         $permissions = $this->rolePermissionFacade->getRolePermissionsByRoleId($user->role);
 
         return new BlogIdentity(
             $user->id ?? -1,
             $permissions,
-            $user->role, // nebo pole více rolí
+            $user->role,
             ['name' => $user->name],
         );
     }

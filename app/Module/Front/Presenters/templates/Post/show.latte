@@ -28,18 +28,27 @@
     <div class="post">{$post->content}</div>
 
     <div class="mt-4 mb-2 flex items-center gap-2">
-        <button
-            id="like-btn"
-            class="like-btn flex items-center gap-1 px-3 py-1 rounded-full border-1 text-sm font-medium transition-colors
-                   {if $hasLiked}border-red-500 bg-red-500/20 text-red-400{else}border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400{/if}"
-            data-post-id="{$post->id}"
-            data-liked="{$hasLiked ? 'true' : 'false'}"
-            data-url="{link toggleLike!, id => $post->id}"
-            data-logged-in="{$user->isLoggedIn() ? 'true' : 'false'}"
+        {snippet like}
+        <a n:if="$user->isLoggedIn()"
+           n:href="toggleLike!, id => $post->id"
+           id="like-btn"
+           class="ajax like-btn flex items-center gap-1 px-3 py-1 rounded-full border-1 text-sm font-medium transition-colors no-underline
+                  {if $hasLiked}border-red-500 bg-red-500/20 text-red-400{else}border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400{/if}"
         >
             <span class="like-icon">{if $hasLiked}&#10084;{else}&#9825;{/if}</span>
             <span class="like-count">{$likeCount}</span>
+        </a>
+        <button n:if="!$user->isLoggedIn()"
+                id="like-btn"
+                class="like-btn flex items-center gap-1 px-3 py-1 rounded-full border-1 text-sm font-medium transition-colors
+                       border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400"
+                onclick="window.toast.error('Pro lajkování se musíte přihlásit.')"
+                data-logged-in="false"
+        >
+            <span class="like-icon">&#9825;</span>
+            <span class="like-count">{$likeCount}</span>
         </button>
+        {/snippet}
     </div>
 
 </div>
@@ -49,7 +58,7 @@
 
         <h2 class="font-semibold text-lg mb-2">Komentáře:</h2>
 
-
+        {snippet comments}
         <div class="comments mb-2">
             <div n:foreach="$comments as $comment" class="comments comment-content mb-4 p-3 border-1 border-stone-700 bg-stone-800 rounded-xl">
                 <div class="grid grid-cols-2">
@@ -65,8 +74,28 @@
                 </div>
 
                 <div class="mb-2">{$comment->content}</div>
+
+                <div class="flex items-center gap-2">
+                    <a n:if="$user->isLoggedIn()"
+                       n:href="toggleCommentLike!, commentId => $comment->id"
+                       class="ajax comment-like-btn flex items-center gap-1 px-2 py-0.5 rounded-full border-1 text-xs font-medium transition-colors no-underline
+                              {if $commentHasLiked[$comment->id]}border-red-500 bg-red-500/20 text-red-400{else}border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400{/if}"
+                    >
+                        <span>{if $commentHasLiked[$comment->id]}&#10084;{else}&#9825;{/if}</span>
+                        <span class="comment-like-count">{$commentLikeCounts[$comment->id]}</span>
+                    </a>
+                    <button n:if="!$user->isLoggedIn()"
+                            class="comment-like-btn flex items-center gap-1 px-2 py-0.5 rounded-full border-1 text-xs font-medium transition-colors
+                                   border-stone-700 bg-stone-800 text-stone-400 hover:border-red-500 hover:text-red-400"
+                            onclick="window.toast.error('Pro lajkování se musíte přihlásit.')"
+                    >
+                        <span>&#9825;</span>
+                        <span class="comment-like-count">{$commentLikeCounts[$comment->id]}</span>
+                    </button>
+                </div>
             </div>
         </div>
+        {/snippet}
     </div>
     <div  class="comment-form mb-4 p-3 border-1 border-stone-800 bg-stone-900 rounded-xl" style="grid-row: 1;grid-column: 2/3">
         <div n:if="$presenter->isAllowed($permList->addComment)">

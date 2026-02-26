@@ -25,7 +25,6 @@ describe('Like / Unlike postu', () => {
     cy.visit(`/post/show/${testPostId}`);
 
     cy.get('#like-btn').should('be.visible');
-    cy.get('#like-btn').should('have.attr', 'data-logged-in', 'false');
 
     cy.get('#like-btn').click();
     cy.expectToast('Pro lajkování se musíte přihlásit');
@@ -35,16 +34,15 @@ describe('Like / Unlike postu', () => {
     cy.login('admin');
     cy.visit(`/post/show/${testPostId}`);
 
-    cy.get('#like-btn').should('have.attr', 'data-logged-in', 'true');
-
     // Zapamatujeme počáteční stav
     cy.get('.like-count').invoke('text').then((countBefore) => {
       const before = parseInt(countBefore, 10);
 
       cy.get('#like-btn').click();
 
-      // Počkáme na AJAX odpověď
-      cy.wait(1000);
+      // Počkáme na snippet redraw
+      cy.get('#like-btn', { timeout: 5000 }).should('exist');
+      cy.wait(500);
 
       cy.get('.like-count').invoke('text').then((countAfter) => {
         const after = parseInt(countAfter, 10);
@@ -78,12 +76,13 @@ describe('Like / Unlike postu', () => {
     cy.login('admin');
     cy.visit(`/post/show/${testPostId}`);
 
-    cy.get('#like-btn').invoke('attr', 'data-liked').then((likedBefore) => {
+    // Zjistíme aktuální text ikony
+    cy.get('.like-icon').invoke('text').then((iconBefore) => {
       cy.get('#like-btn').click();
       cy.wait(1000);
 
-      cy.get('#like-btn').invoke('attr', 'data-liked').then((likedAfter) => {
-        expect(likedBefore).to.not.eq(likedAfter);
+      cy.get('.like-icon').invoke('text').then((iconAfter) => {
+        expect(iconBefore.trim()).to.not.eq(iconAfter.trim());
       });
     });
 

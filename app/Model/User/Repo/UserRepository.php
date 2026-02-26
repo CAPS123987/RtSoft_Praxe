@@ -12,6 +12,7 @@ final class UserRepository extends Repository
     public const string ROLE_COL = "role_id";
     public const string NAME_COL = "name";
     public const string PASSWORD_COL = "password_hash";
+    public const string LAST_LOGIN_COL = "last_login";
 
 
     public function __construct(
